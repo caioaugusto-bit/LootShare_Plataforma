@@ -27,20 +27,18 @@
         .btn-sync-green:hover:not(:disabled) { filter: brightness(0.9); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         .btn-sync-green.syncing .material-symbols-outlined { animation: rotation 1s linear infinite; }
 
-        /* 🔹 AVATAR E NOVAS BADGES ESTILO "PILL" 🔹 */
         .user-avatar-wrapper { position: relative; margin-left: 12px; cursor: pointer; display: inline-block; }
         .user-avatar-img-wrapper { width: 36px; height: 36px; border-radius: 50%; background-color: var(--primary); color: white; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 2px solid transparent; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .user-avatar-wrapper:hover .user-avatar-img-wrapper { border-color: var(--primary); filter: brightness(1.1); }
         
         .role-badge { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 12px; color: #fff; border: 2px solid var(--navbar-bg); z-index: 10; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.15); white-space: nowrap; line-height: 1.2; font-family: 'Roboto', sans-serif; }
-        
         .role-badge-inline { display: inline-block; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 12px; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.2; }
         
-        .role-admin { background-color: #0b57d0; } /* Azul */
-        .role-gerente { background-color: #d93025; } /* Vermelho */
-        .role-editor { background-color: #f9ab00; } /* Amarelo */
-        .role-leitor { background-color: #1ea446; } /* Verde */
-        .role-desativado { background-color: #80868b; } /* Cinza */
+        .role-admin { background-color: #0b57d0; } 
+        .role-gerente { background-color: #d93025; } 
+        .role-editor { background-color: #f9ab00; } 
+        .role-leitor { background-color: #1ea446; } 
+        .role-desativado { background-color: #80868b; } 
 
         .container { max-width: 1300px; margin: 32px auto; padding: 32px; background: var(--container-bg); border-radius: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); min-height: 500px; position: relative; }
         .section { display: none; }
@@ -155,7 +153,6 @@
         .badge-blend { background-color: #ea7600; color: #ffffff; border: 1px solid #c36200; }
         .badge-pdf { background-color: #f40f02; color: #ffffff; border: 1px solid #c90000; }
 
-        /* 🔹 MODAIS CORRIGIDOS COM CLIQUE FORA 🔹 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(2px); cursor: pointer;}
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 4000; backdrop-filter: blur(2px); }
         .modal-overlay.active, #loading-overlay.active { display: flex; }
@@ -176,7 +173,6 @@
         .profile-pic-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1; }
         .profile-pic-picker span { z-index: 0; color: var(--text-muted); font-size: 32px; }
 
-        /* 🔹 TELA DE LOGIN 🔹 */
         #login-screen { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 3000; 
             background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://drive.google.com/thumbnail?id=1OoAJJuiqNdp8s_HQ8XJHOIfJaCLvtVSg&sz=w1920') no-repeat center center / cover; 
@@ -187,7 +183,6 @@
         
         #app-wrapper { display: none; }
         
-        /* 🔹 ADMIN DASHBOARD (LISTA COLAPSÁVEL CINZA) 🔹 */
         .admin-user-card { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 16px; background: var(--container-bg); transition: box-shadow 0.2s;}
         .admin-user-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         .admin-user-card .header { display: flex; align-items: center; gap: 16px; padding: 16px; cursor: pointer; border-radius: 12px; background: var(--surface-color); transition: background 0.2s; user-select: none;}
@@ -222,7 +217,7 @@
         </div>
     </div>
 
-    <!-- 🔹 MODAL PERFIL (FECHA CLICANDO FORA) 🔹 -->
+    <!-- MODAL PERFIL -->
     <div id="modal-perfil" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-perfil')">
         <div class="modal-content" style="text-align: center; position:relative;">
             
@@ -269,6 +264,7 @@
         </div>
     </div>
 
+    <!-- TELA DE LOADING DA BARRA DE PROGRESSO -->
     <div id="loading-overlay">
         <div class="loading-box">
             <span class="spinner"></span>
@@ -338,7 +334,7 @@
                             <span class="active-crumb"><span class="material-symbols-outlined">folder_open</span> Projetos</span>
                         </div>
                         <div class="toolbar" id="explorer-toolbar">
-                            <!-- Injetado via JS: Indicador de Permissão + Botões -->
+                            <!-- Injetado via JS -->
                         </div>
                         <div class="grid-container" id="explorer-grid"></div>
                     </div>
@@ -365,7 +361,7 @@
         </div>
     </div>
 
-    <!-- 🔹 MODAL RESTAURAR (FECHA CLICANDO FORA) 🔹 -->
+    <!-- MODAL RESTAURAR -->
     <div id="modal-restauracao" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-restauracao')">
         <div class="modal-content">
             <button class="close-btn" onclick="fecharModalRestauracao()"><span class="material-symbols-outlined">close</span></button>
@@ -379,8 +375,8 @@
         </div>
     </div>
 
-    <input type="file" id="file-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf">
-    <input type="file" id="file-replace-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf">
+    <input type="file" id="file-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf, .zip, .rar">
+    <input type="file" id="file-replace-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf, .zip, .rar">
 
     <script>
         // --- ⚠️ COLE SUA NOVA URL AQUI ⚠️ ---
@@ -388,7 +384,7 @@
 
         let appData = { projetos: [], subprojetos: {}, pastas: {}, arquivos: [], logs: [], order: {}, users: {} };
         let currentUser = null; 
-        let isModalObrigatorio = false; // Controla se o usuário pode fechar o modal
+        let isModalObrigatorio = false; 
         
         let currentLevel = 0; 
         let currentPathArr = []; 
@@ -400,7 +396,7 @@
         let isSyncing = false; 
 
         // ==========================================
-        // SISTEMA DE RBAC (FUNÇÕES DE CHECAGEM)
+        // SISTEMA DE RBAC
         // ==========================================
         function getPermissaoAtual() {
             if (!currentUser) return 'leitor';
@@ -411,9 +407,6 @@
             return pRoles[projAtual] || 'leitor';
         }
 
-        // ==========================================
-        // SISTEMA DE LOGIN E SESSÃO
-        // ==========================================
         function checarSessao() {
             try {
                 const savedEmail = localStorage.getItem('lootshare_email');
@@ -442,7 +435,7 @@
             if (!email || !senha) return alert("Preencha e-mail e senha.");
             setCarregando(true, "Autenticando...");
             
-            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', body: JSON.stringify({ acao: 'login', email: email, senha: senha }) })
+            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ acao: 'login', email: email, senha: senha }) })
             .then(res => res.json()).then(result => {
                 setCarregando(false);
                 if (!result.sucesso) return alert(result.erro);
@@ -499,9 +492,6 @@
             setBadge('nav-role-badge', currentUser.globalRole === 'admin' ? 'admin' : 'leitor', 'var(--navbar-bg)');
         }
 
-        // ==========================================
-        // FECHAR MODAIS CLICANDO FORA
-        // ==========================================
         function fecharModalSeClicarFora(e, modalId) {
             if(e.target.id === modalId) {
                 if(modalId === 'modal-perfil' && !isModalObrigatorio) fecharModalPerfil();
@@ -510,7 +500,7 @@
         }
 
         // ==========================================
-        // PERFIL E ADMINISTRAÇÃO
+        // PERFIL
         // ==========================================
         let perfilFotoBase64 = null;
         let perfilFotoMime = null;
@@ -597,7 +587,7 @@
             setCarregando(true, "Salvando perfil...");
             let payload = { acao: 'salvarPerfil', email: currentUser.email, nome: nome, cargo: cargo, base64: perfilFotoBase64, mimeType: perfilFotoMime };
 
-            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', body: JSON.stringify(payload) })
+            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
             .then(res => res.json()).then(result => {
                 setCarregando(false);
                 if (result.sucesso) {
@@ -624,7 +614,7 @@
         window.toggleAdminRoles = function(email) {
             let panel = document.getElementById('roles-' + email);
             let icon = document.getElementById('icon-' + email);
-            if(panel.style.display === 'none') {
+            if(panel.style.display === 'none' || panel.style.display === '') {
                 panel.style.display = 'block';
                 icon.innerText = 'expand_less';
             } else {
@@ -704,7 +694,7 @@
         function enviarUpdateUserAdmin(email) { enviarComando({ acao: 'adminSalvarUsuario', targetEmail: email, userData: appData.users[email] }, "Atualizando..."); }
 
         // ==========================================
-        // SISTEMA BASE (CORE EXPLORER)
+        // SISTEMA BASE E NOVA API DE UPLOAD
         // ==========================================
         function getFileBadge(filename) {
             let ext = filename.split('.').pop().toLowerCase();
@@ -743,11 +733,53 @@
         function enviarComando(dados, mensagemLoading) {
             setCarregando(true, mensagemLoading);
             if (currentUser) { dados.userNome = currentUser.nome; dados.userEmail = currentUser.email; }
-            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
+            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) })
             .then(res => res.json()).then(resultado => {
                 if(resultado.sucesso) sincronizarDrive(); 
                 else { alert(resultado.erro || "Erro."); setCarregando(false); }
             }).catch(err => { alert("Erro de comunicação."); setCarregando(false); });
+        }
+
+        // 🔹 NOVO: UPLOAD DIRETO PARA A API DO DRIVE COM PROGRESSO (%) 🔹
+        function fazerUploadDireto(file, path, targetName = null, isAux = false, isReplace = false) {
+            setCarregando(true, "Conectando ao Drive...");
+            
+            let payloadUrl = { acao: 'getUploadUrl', path: path, nome: file.name, mimeType: file.type, isAux: isAux, targetName: targetName };
+            if (currentUser) { payloadUrl.userNome = currentUser.nome; payloadUrl.userEmail = currentUser.email; }
+
+            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payloadUrl) })
+            .then(r => r.json()).then(resUrl => {
+                if (!resUrl.sucesso) throw new Error(resUrl.erro);
+
+                let xhr = new XMLHttpRequest();
+                xhr.open('PUT', resUrl.url, true);
+                
+                // Barra de Progresso Real
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        let percent = Math.round((e.loaded / e.total) * 100);
+                        document.getElementById('loading-text').innerText = `Enviando Arquivo: ${percent}%`;
+                    }
+                };
+                
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        document.getElementById('loading-text').innerText = "Salvando versão...";
+                        let fileMeta = JSON.parse(xhr.responseText);
+                        
+                        let finalPayload = { acao: 'finalizeUpload', fileId: fileMeta.id, nome: file.name, path: path, isAux: isAux, isReplace: isReplace, targetName: targetName };
+                        if (currentUser) { finalPayload.userNome = currentUser.nome; finalPayload.userEmail = currentUser.email; }
+
+                        fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(finalPayload) })
+                        .then(r => r.json()).then(resFin => {
+                            if(resFin.sucesso) sincronizarDrive();
+                            else { alert("Erro na finalização: " + resFin.erro); setCarregando(false); }
+                        }).catch(e => { alert("Erro de rede na finalização."); setCarregando(false); });
+                    } else { alert("Erro na API do Google Drive."); setCarregando(false); }
+                };
+                xhr.onerror = function() { alert("A conexão com a internet falhou."); setCarregando(false); };
+                xhr.send(file); 
+            }).catch(e => { alert("Erro: " + e.message); setCarregando(false); });
         }
 
         function renderizarTudo() {
@@ -866,7 +898,6 @@
             let canUpload = canCreate || (perm === 'editor');
             let canRename = canCreate;
 
-            // 🔹 INDICADOR DE STATUS E AÇÕES NA BARRA 🔹
             let permText = perm.charAt(0).toUpperCase() + perm.slice(1);
             let indicatorHtml = currentLevel > 0 ? 
                 `<div style="display:flex; align-items:center; gap:8px;">
@@ -985,7 +1016,6 @@
                             <div class="file-name" title="${f.nome}">${f.nome}</div>
                             <div class="file-date">${f.data}</div>
                             
-                            <!-- 🔹 BOTÕES DE AÇÃO 🔹 -->
                             <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
                                 <a href="${f.downloadUrl}" target="_blank" style="width:100%; text-decoration:none;">
                                     <button class="btn btn-primary" style="width:100%;"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Baixar</button>
@@ -1019,10 +1049,7 @@
             let inp = document.getElementById('file-input');
             inp.onchange = e => {
                 let file = e.target.files[0];
-                if(!file) return;
-                const reader = new FileReader();
-                reader.onload = r => { enviarComando({ acao: 'upload', path: getPathString(), nome: file.name, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Enviando arquivo..."); };
-                reader.readAsDataURL(file);
+                if(file) fazerUploadDireto(file, getPathString(), null, false, false);
                 inp.value = '';
             };
             inp.click();
@@ -1037,10 +1064,7 @@
 
         document.getElementById('file-replace-input').addEventListener('change', function(e) {
             let file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = r => { enviarComando({ acao: 'substituir', path: getPathString(), nome: arquivoParaSubstituir, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Substituindo arquivo..."); };
-            reader.readAsDataURL(file);
+            if(file) fazerUploadDireto(file, getPathString(), arquivoParaSubstituir, false, true);
             this.value = '';
         });
 
@@ -1077,9 +1101,7 @@
                 }
                 if (levelDrop === 3) {
                     let file = e.dataTransfer.files[0];
-                    const reader = new FileReader();
-                    reader.onload = r => { enviarComando({ acao: 'uploadAux', path: getPathString(), targetName: targetName, nome: file.name, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Anexando..."); };
-                    reader.readAsDataURL(file);
+                    fazerUploadDireto(file, getPathString(), targetName, true, false);
                     return;
                 }
             }
