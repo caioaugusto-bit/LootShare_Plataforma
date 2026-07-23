@@ -247,7 +247,7 @@
                     <span class="material-symbols-outlined">person</span>
                     <img id="profile-pic-preview" src="" style="display: none;">
                 </div>
-                <div id="modal-role-badge" class="role-badge role-leitor" style="display:none; border-color: var(--container-bg);"></div>
+                <div id="modal-role-badge" class="role-badge role-admin" style="display:none; border-color: var(--container-bg);">ADMIN</div>
             </div>
 
             <input type="file" id="profile-pic-input" style="display:none" accept="image/*">
@@ -268,7 +268,7 @@
         </div>
     </div>
 
-    <!-- 🔹 NOVO: MODAL DE UPLOADS MULTIPLOS 🔹 -->
+    <!-- MODAL DE UPLOADS MULTIPLOS -->
     <div id="modal-upload" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-upload')">
         <div class="modal-content" style="text-align: center;">
             <button class="close-btn" onclick="fecharModalUpload()"><span class="material-symbols-outlined">close</span></button>
@@ -280,9 +280,7 @@
                 <span class="material-symbols-outlined">note_add</span> Selecionar Arquivos
             </button>
             
-            <div id="upload-modal-list" class="file-list">
-                <!-- Arquivos injetados aqui -->
-            </div>
+            <div id="upload-modal-list" class="file-list"></div>
             
             <div style="display:flex; justify-content: space-between; margin-top: 24px; gap:8px;">
                 <button class="btn btn-secondary" style="flex:1;" onclick="minimizarUploadTracker()">Segundo Plano</button>
@@ -291,7 +289,7 @@
         </div>
     </div>
 
-    <!-- 🔹 NOVO: TRACKER EM SEGUNDO PLANO 🔹 -->
+    <!-- TRACKER EM SEGUNDO PLANO -->
     <div id="upload-tracker">
         <div class="tracker-header" onclick="toggleTrackerBody()">
             <div style="display:flex; align-items:center; gap:8px;">
@@ -300,12 +298,9 @@
             </div>
             <span class="material-symbols-outlined" id="tracker-icon">expand_more</span>
         </div>
-        <div class="tracker-body" id="tracker-list" style="display:none;">
-            <!-- Arquivos injetados aqui -->
-        </div>
+        <div class="tracker-body" id="tracker-list" style="display:none;"></div>
     </div>
 
-    <!-- OVERLAY GENERICO DE LOADING -->
     <div id="loading-overlay">
         <div class="loading-box">
             <span class="spinner"></span>
@@ -339,7 +334,7 @@
                         <img id="nav-user-img" src="" style="display: none; width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">
                         <span id="nav-user-icon" class="material-symbols-outlined" style="font-size:20px;">person</span>
                     </div>
-                    <div id="nav-role-badge" class="role-badge role-leitor" style="display:none; border-color: var(--navbar-bg);"></div>
+                    <div id="nav-role-badge" class="role-badge role-admin" style="display:none; border-color: var(--navbar-bg);">ADMIN</div>
                 </div>
             </div>
         </nav>
@@ -433,13 +428,9 @@
         const itensPorPagina = 30;
         let isSyncing = false; 
 
-        // 🔹 VARIÁVEIS DA FILA DE UPLOADS
-        let uploadQueue = []; // { id, file, name, progress, status, path, isAux, targetName, isReplace, erro }
+        let uploadQueue = []; 
         let isUploadingFiles = false;
 
-        // ==========================================
-        // SISTEMA DE RBAC
-        // ==========================================
         function getPermissaoAtual() {
             if (!currentUser) return 'leitor';
             if (currentUser.globalRole === 'admin') return 'admin';
@@ -529,9 +520,16 @@
             if (!currentUser) return;
             let img = document.getElementById('nav-user-img');
             let icon = document.getElementById('nav-user-icon');
+            let badge = document.getElementById('nav-role-badge');
+            
             if (currentUser.foto) { img.src = currentUser.foto; img.style.display = 'block'; icon.style.display = 'none'; } 
             else { img.style.display = 'none'; icon.style.display = 'block'; }
-            setBadge('nav-role-badge', currentUser.globalRole === 'admin' ? 'admin' : 'leitor', 'var(--navbar-bg)');
+            
+            if (currentUser.globalRole === 'admin') {
+                setBadge('nav-role-badge', 'admin', 'var(--navbar-bg)');
+            } else {
+                if (badge) badge.style.display = 'none';
+            }
         }
 
         function fecharModalSeClicarFora(e, modalId) {
@@ -542,9 +540,6 @@
             }
         }
 
-        // ==========================================
-        // PERFIL
-        // ==========================================
         let perfilFotoBase64 = null;
         let perfilFotoMime = null;
 
@@ -571,7 +566,12 @@
             if (currentUser.foto) { preview.src = currentUser.foto; preview.style.display = 'block'; } 
             else preview.style.display = 'none';
             
-            setBadge('modal-role-badge', currentUser.globalRole === 'admin' ? 'admin' : 'leitor', 'var(--container-bg)');
+            let badge = document.getElementById('modal-role-badge');
+            if (currentUser.globalRole === 'admin') {
+                setBadge('modal-role-badge', 'admin', 'var(--container-bg)');
+            } else {
+                if (badge) badge.style.display = 'none';
+            }
 
             perfilFotoBase64 = null;
             document.getElementById('profile-pic-input').value = "";
@@ -600,7 +600,12 @@
             if (u.foto) { preview.src = u.foto; preview.style.display = 'block'; } 
             else preview.style.display = 'none';
             
-            setBadge('modal-role-badge', u.status === 'desativado' ? 'desativado' : (u.globalRole === 'admin' ? 'admin' : 'leitor'), 'var(--container-bg)');
+            let badge = document.getElementById('modal-role-badge');
+            if (u.globalRole === 'admin') {
+                setBadge('modal-role-badge', 'admin', 'var(--container-bg)');
+            } else {
+                if (badge) badge.style.display = 'none';
+            }
 
             document.getElementById('modal-perfil').classList.add('active');
         }
@@ -645,9 +650,6 @@
             }).catch(err => { alert("Erro."); setCarregando(false); });
         }
 
-        // ==========================================
-        // ADMIN DASHBOARD
-        // ==========================================
         window.abrirAdminPanel = function() {
             fecharModalPerfil();
             switchTab('admin-dashboard');
@@ -692,8 +694,8 @@
                 });
 
                 let statusColor = u.status === 'desativado' ? 'color: var(--error);' : 'color: var(--primary);';
-                let mainRole = u.status === 'desativado' ? 'desativado' : (u.globalRole === 'admin' ? 'admin' : 'leitor');
                 let mainRoleText = u.globalRole === 'admin' ? 'Admin Global' : 'Usuário Padrão';
+                let badgeDisplay = u.globalRole === 'admin' ? 'block' : 'none';
                 
                 list.innerHTML += `
                     <div class="admin-user-card">
@@ -701,7 +703,7 @@
                             <div style="position:relative; width:48px; height:48px; border-radius:50%; background:var(--primary); display:flex; justify-content:center; align-items:center; color:white; overflow:visible; flex-shrink:0;">
                                 <img src="${u.foto || ''}" onerror="this.style.display='none'" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
                                 <span class="material-symbols-outlined" style="${u.foto ? 'display:none;' : ''}">person</span>
-                                <div class="role-badge role-${mainRole}" style="bottom:-6px; border-color:var(--surface-color); font-size:8px;">${mainRole.toUpperCase()}</div>
+                                <div class="role-badge role-admin" style="bottom:-6px; border-color:var(--surface-color); font-size:8px; display:${badgeDisplay};">ADMIN</div>
                             </div>
                             
                             <div style="flex-grow:1;">
@@ -736,10 +738,6 @@
         window.apagarUser = function(email) { if(confirm("Apagar permanentemente este usuário da plataforma?")) enviarComando({ acao: 'adminExcluirUsuario', targetEmail: email }, "Excluindo..."); }
         function enviarUpdateUserAdmin(email) { enviarComando({ acao: 'adminSalvarUsuario', targetEmail: email, userData: appData.users[email] }, "Atualizando..."); }
 
-
-        // ==========================================
-        // SISTEMA BASE (METADADOS)
-        // ==========================================
         function getFileBadge(filename) {
             let ext = filename.split('.').pop().toLowerCase();
             if (ext === 'psd') return `<span class="soft-badge badge-psd" title="Photoshop">Ps</span>`;
@@ -783,26 +781,14 @@
             }).catch(err => { alert("Erro de comunicação."); setCarregando(false); });
         }
 
-
-        // ==========================================
-        // 🔹 SISTEMA DE FILA DE UPLOADS (BACKGROUND) 🔹
-        // ==========================================
         function abrirModalUpload() {
-            // Remove concluidos antes de abrir
             uploadQueue = uploadQueue.filter(u => u.status !== 'done');
             renderizarUIUploads();
             document.getElementById('modal-upload').classList.add('active');
         }
 
-        function fecharModalUpload() {
-            document.getElementById('modal-upload').classList.remove('active');
-        }
-
-        function minimizarUploadTracker() {
-            fecharModalUpload();
-            if(uploadQueue.length > 0) document.getElementById('upload-tracker').style.display = 'flex';
-        }
-
+        function fecharModalUpload() { document.getElementById('modal-upload').classList.remove('active'); }
+        function minimizarUploadTracker() { fecharModalUpload(); if(uploadQueue.length > 0) document.getElementById('upload-tracker').style.display = 'flex'; }
         function toggleTrackerBody() {
             let body = document.getElementById('tracker-list');
             let icon = document.getElementById('tracker-icon');
@@ -817,7 +803,6 @@
             this.value = '';
         });
 
-        // isAux e isReplace jogam direto pro tracker e começam (autoStart = true)
         function adicionarFilaUpload(file, path, targetName, isAux, isReplace, autoStart) {
             let obj = {
                 id: Date.now() + Math.random(),
@@ -840,11 +825,10 @@
             let next = uploadQueue.find(u => u.status === 'pending');
             if(!next) {
                 isUploadingFiles = false;
-                sincronizarDrive(false); // Atualiza os diretorios silenciosamente
+                sincronizarDrive(false); 
                 renderizarUIUploads();
-                // Oculta tracker depois de 5 segundos se todos concluídos
-                if(uploadQueue.every(u => u.status === 'done')) {
-                    setTimeout(() => { document.getElementById('upload-tracker').style.display = 'none'; }, 5000);
+                if(uploadQueue.every(u => u.status === 'done' || u.status === 'error')) {
+                    setTimeout(() => { document.getElementById('upload-tracker').style.display = 'none'; }, 6000);
                 }
                 return;
             }
@@ -886,7 +870,7 @@
                 };
                 
                 xhr.onerror = function() { 
-                    next.status = 'done'; // Fallback CORS
+                    next.status = 'done'; 
                     renderizarUIUploads(); processarProximoFila();
                 };
                 
@@ -927,14 +911,10 @@
 
             document.getElementById('upload-modal-list').innerHTML = htmlList;
             document.getElementById('tracker-list').innerHTML = htmlList;
-            
             document.getElementById('tracker-title').innerText = pendentes > 0 ? `${pendentes} uploads em andamento` : 'Uploads concluídos';
             document.getElementById('btn-start-uploads').disabled = (pendentes === 0 || isUploadingFiles);
         }
 
-        // ==========================================
-        // NAVEGAÇÃO E RENDERIZAÇÃO DOM
-        // ==========================================
         function renderizarTudo() {
             renderizarHistorico();
             renderizarVersoes();
@@ -1151,7 +1131,6 @@
                             let auxBadge = getFileBadge(aux.nome);
                             let dragAux = canUpload ? `draggable="true" ondragstart="dragStartAux(event, '${aux.id}', '${f.nome}')"` : '';
                             
-                            // 🔹 BOTÃO DO DRIVE PARA O ANEXO 🔹
                             let btnAcoesAux = `
                             <div style="display:flex; gap:4px;">
                                 <a href="${aux.url}" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px;" title="Baixar"><span class="material-symbols-outlined" style="font-size:16px;">download</span></button></a>
@@ -1254,7 +1233,6 @@
                 }
                 if (levelDrop === 3) {
                     let file = e.dataTransfer.files[0];
-                    // Se dropar arquivo em cima de um Card, vira anexo em Background (autoStart = true)
                     adicionarFilaUpload(file, getPathString(), targetName, true, false, true);
                     return;
                 }
