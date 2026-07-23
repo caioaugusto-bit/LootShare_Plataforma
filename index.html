@@ -101,7 +101,8 @@
         .folder-icon:hover { color: var(--primary); }
         .tree-item.active .folder-icon { color: var(--primary); }
 
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; align-items: start; min-height: 300px; padding: 8px 0; transition: 0.3s; }
+        /* 🔹 GRID E CARDS: 25% mais largos 🔹 */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; align-items: start; min-height: 300px; padding: 8px 0; transition: 0.3s; }
         body.dragging-aux .grid-container { border: 2px dashed var(--tertiary); background-color: var(--secondary-container); border-radius: 12px; padding: 16px;}
         
         .rename-btn { background: transparent; border: none; border-radius: 50%; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); z-index: 10; transition: 0.2s; opacity: 0; }
@@ -109,7 +110,7 @@
         .card-vertical:hover .rename-btn, .folder-card:hover .rename-btn { opacity: 1; }
 
         .card-title-wrapper { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 12px 8px; z-index: 2; position: relative; background-color: var(--container-bg); }
-        .card-title { font-weight: 500; font-size: 15px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; margin: 0; padding: 0;}
+        .card-title { font-weight: 500; font-size: 15px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; margin: 0; padding: 0;}
 
         .card-vertical { background-color: var(--container-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; height: 100%; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05); }
         .card-vertical:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.12); border-color: var(--primary); }
@@ -132,18 +133,30 @@
         .file-thumb-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: opacity 0.3s; opacity: 0; z-index: 1; }
         .file-thumb-fallback { font-size: 48px; color: var(--text-muted); opacity: 0.3; }
 
-        .replace-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; opacity: 0; transition: 0.2s; z-index: 10; backdrop-filter: blur(4px); }
-        .replace-btn:hover { background-color: var(--primary); border-color: var(--primary); }
-        .file-thumb-wrapper:hover .replace-btn { opacity: 1; }
+        /* 🔹 NOVOS BOTÕES NA IMAGEM (LUPA E LÁPIS) 🔹 */
+        .zoom-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.65); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: 0.2s; z-index: 10; backdrop-filter: blur(2px); }
+        .zoom-btn:hover { background-color: var(--primary); border-color: var(--primary); transform: translate(-50%, -50%) scale(1.1); }
+        
+        .edit-btn { position: absolute; top: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.65); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: 0.2s; z-index: 10; backdrop-filter: blur(2px); }
+        .edit-btn:hover { background-color: var(--primary); border-color: var(--primary); }
+        
+        .file-thumb-wrapper:hover .zoom-btn, .file-thumb-wrapper:hover .edit-btn { opacity: 1; }
 
         .file-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; word-break: break-all; }
         
         .aux-container { margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px; text-align: left; }
         .aux-title { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
-        .aux-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface-color); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; border: 1px solid transparent; cursor: grab; transition: 0.2s; }
+        
+        /* 🔹 SISTEMA DE PREVIEW DOS ANEXOS 🔹 */
+        .aux-item { position: relative; display: flex; justify-content: space-between; align-items: center; background: var(--surface-color); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; border: 1px solid transparent; cursor: grab; transition: 0.2s; }
         .aux-item:hover { border-color: var(--border-color); background: var(--bg-color); }
         .aux-item:active { cursor: grabbing; }
-        .aux-name { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+        .aux-name { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; cursor: help;}
+        
+        .aux-preview { display: none; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); z-index: 1000; background: var(--container-bg); padding: 6px; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,0,0,0.2); width: max-content; }
+        .aux-preview::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-width: 6px; border-style: solid; border-color: var(--container-bg) transparent transparent transparent; }
+        .aux-item:hover .aux-preview { display: block; animation: fadeIn 0.2s ease; }
+        .aux-preview img { width: 200px; height: 200px; object-fit: contain; border-radius: 8px; background: var(--surface-color); }
         
         .star-badge { position: absolute; top: 20px; right: -8px; background: var(--primary); color: var(--on-primary); padding: 4px 12px; border-radius: 12px 0 0 12px; font-size: 11px; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 2; pointer-events: none; display: flex; align-items: center; gap: 4px; }
         
@@ -196,7 +209,6 @@
         .loading-box { background: var(--container-bg); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 40px; padding: 40px; border: 1px dashed var(--border-color); border-radius: 16px; grid-column: 1 / -1; }
 
-        /* 🔹 FILA DE UPLOADS (MODAL E TRACKER) 🔹 */
         .file-list { max-height: 250px; overflow-y: auto; margin-top: 16px; text-align: left; padding-right: 4px;}
         .upload-item { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px;}
         .upload-item-header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500;}
@@ -286,6 +298,14 @@
                 <button class="btn btn-secondary" style="flex:1;" onclick="minimizarUploadTracker()">Segundo Plano</button>
                 <button class="btn btn-success" style="flex:1;" id="btn-start-uploads" onclick="iniciarUploadsFila()" disabled>Iniciar Fila</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 🔹 NOVO: MODAL ZOOM (TELA CHEIA) 🔹 -->
+    <div id="modal-zoom" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-zoom')">
+        <div style="position: relative; max-width: 90vw; max-height: 90vh;">
+            <button class="close-btn" style="position: absolute; top: -16px; right: -16px; background: var(--container-bg); z-index: 10;" onclick="fecharModalZoom()"><span class="material-symbols-outlined">close</span></button>
+            <img id="zoom-img" src="" style="max-width: 100%; max-height: 90vh; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); object-fit: contain; background: var(--surface-color);">
         </div>
     </div>
 
@@ -413,9 +433,9 @@
 
     <script>
         // --- ⚠️ COLE SUA NOVA URL AQUI ⚠️ ---
-        const URL_DO_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzolBjRpd1oaW1Yz8xI4PfFI0j2FL2q5KKx5iHSLKRA5pcGG-RTUhcAA3H8Rhsk1issgA/exec';
+        const URL_DO_APPS_SCRIPT = 'COLE_AQUI_A_URL_DO_SEU_WEB_APP';
 
-        let appData = { projetos: [], subprojetos: {}, pastas: {}, arquivos: [], logs: [], order: {}, users: {} };
+        let appData = { projetos: [], subprojetos: {}, pastasContent: {}, arquivos: [], thumbs: {}, logs: [], order: {}, users: {} };
         let currentUser = null; 
         let isModalObrigatorio = false; 
         
@@ -525,6 +545,7 @@
             if (currentUser.foto) { img.src = currentUser.foto; img.style.display = 'block'; icon.style.display = 'none'; } 
             else { img.style.display = 'none'; icon.style.display = 'block'; }
             
+            // Só deixa badge de admin na foto de perfil 
             if (currentUser.globalRole === 'admin') {
                 setBadge('nav-role-badge', 'admin', 'var(--navbar-bg)');
             } else {
@@ -537,9 +558,26 @@
                 if(modalId === 'modal-perfil' && !isModalObrigatorio) fecharModalPerfil();
                 else if (modalId === 'modal-restauracao') fecharModalRestauracao();
                 else if (modalId === 'modal-upload') minimizarUploadTracker();
+                else if (modalId === 'modal-zoom') fecharModalZoom();
             }
         }
 
+        // ==========================================
+        // 🔹 MODAL ZOOM FULLSCREEN 🔹
+        // ==========================================
+        function abrirModalZoom(url) {
+            document.getElementById('zoom-img').src = url;
+            document.getElementById('modal-zoom').classList.add('active');
+        }
+        
+        function fecharModalZoom() {
+            document.getElementById('modal-zoom').classList.remove('active');
+            document.getElementById('zoom-img').src = "";
+        }
+
+        // ==========================================
+        // PERFIL
+        // ==========================================
         let perfilFotoBase64 = null;
         let perfilFotoMime = null;
 
@@ -671,7 +709,7 @@
         function renderizarAdminPanel() {
             const list = document.getElementById('admin-users-list');
             list.innerHTML = '';
-            let projetosNomes = appData.projetos.map(p => p.nome);
+            let projetosNomes = (appData.projetos || []).map(p => p.nome);
 
             for (let email in appData.users) {
                 let u = appData.users[email];
@@ -732,7 +770,7 @@
         window.toggleStatus = function(email, status) { appData.users[email].status = status; enviarUpdateUserAdmin(email); }
         window.salvarRolesUser = function(email) {
             let pRoles = {};
-            appData.projetos.forEach(p => { let sel = document.getElementById(`sel-${email}-${p.nome}`); if (sel) pRoles[p.nome] = sel.value; });
+            (appData.projetos || []).forEach(p => { let sel = document.getElementById(`sel-${email}-${p.nome}`); if (sel) pRoles[p.nome] = sel.value; });
             appData.users[email].projectRoles = pRoles; enviarUpdateUserAdmin(email);
         }
         window.apagarUser = function(email) { if(confirm("Apagar permanentemente este usuário da plataforma?")) enviarComando({ acao: 'adminExcluirUsuario', targetEmail: email }, "Excluindo..."); }
@@ -781,6 +819,7 @@
             }).catch(err => { alert("Erro de comunicação."); setCarregando(false); });
         }
 
+        // 🔹 UPLOADS 🔹
         function abrirModalUpload() {
             uploadQueue = uploadQueue.filter(u => u.status !== 'done');
             renderizarUIUploads();
@@ -799,16 +838,19 @@
         document.getElementById('multi-file-input').addEventListener('change', function(e) {
             let files = e.target.files;
             if(!files || files.length === 0) return;
-            for(let i=0; i<files.length; i++) adicionarFilaUpload(files[i], getPathString(), null, false, false, false);
+            
+            let comentario = prompt("Deseja adicionar um comentário para este(s) arquivo(s)? (Opcional)") || "";
+            
+            for(let i=0; i<files.length; i++) adicionarFilaUpload(files[i], getPathString(), null, false, false, false, comentario);
             this.value = '';
         });
 
-        function adicionarFilaUpload(file, path, targetName, isAux, isReplace, autoStart) {
+        function adicionarFilaUpload(file, path, targetName, isAux, isReplace, autoStart, comentario = "") {
             let obj = {
                 id: Date.now() + Math.random(),
                 file: file, name: file.name, path: path,
                 targetName: targetName, isAux: isAux, isReplace: isReplace,
-                progress: 0, status: 'pending', erro: ''
+                progress: 0, status: 'pending', erro: '', comentario: comentario
             };
             uploadQueue.push(obj);
             renderizarUIUploads();
@@ -857,7 +899,7 @@
                 xhr.onload = function() {
                     if (xhr.status >= 200 && xhr.status < 300) {
                         let fileMeta = JSON.parse(xhr.responseText);
-                        let finalPayload = { acao: 'finalizeUpload', fileId: fileMeta.id, nome: next.name, path: next.path, isAux: next.isAux, isReplace: next.isReplace, targetName: next.targetName };
+                        let finalPayload = { acao: 'finalizeUpload', fileId: fileMeta.id, nome: next.name, path: next.path, isAux: next.isAux, isReplace: next.isReplace, targetName: next.targetName, comentario: next.comentario };
                         if (currentUser) { finalPayload.userNome = currentUser.nome; finalPayload.userEmail = currentUser.email; }
 
                         fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(finalPayload) })
@@ -915,16 +957,6 @@
             document.getElementById('btn-start-uploads').disabled = (pendentes === 0 || isUploadingFiles);
         }
 
-        function renderizarTudo() {
-            renderizarHistorico();
-            renderizarVersoes();
-            if (document.getElementById('admin-dashboard').classList.contains('active')) renderizarAdminPanel();
-            if (document.getElementById('explorer').classList.contains('active')) {
-                renderTree();
-                renderExplorer();
-            }
-        }
-
         function renomearItem(e, oldName) {
             e.stopPropagation();
             let newName = prompt(`Renomear '${oldName}' para:`, oldName);
@@ -950,6 +982,11 @@
             renderTree();
         }
 
+        function getPathString() { return currentPathArr.join('/'); }
+        function goLevel(index) { currentPathArr = currentPathArr.slice(0, index); currentLevel = index; expandPath(currentPathArr); renderTree(); renderExplorer(); }
+        function entrarNaPasta(nome) { currentPathArr.push(nome); currentLevel++; expandPath(currentPathArr); renderTree(); renderExplorer(); }
+
+        // 🔹 TREE (RECURSIVA INFINITA) 🔹
         function renderTree() {
             const container = document.getElementById('sidebar-tree');
             if(!container) return;
@@ -957,61 +994,50 @@
             let isRootActive = currentLevel === 0 ? 'active' : '';
             html += `<li class="tree-item ${isRootActive}" onclick="goLevel(0)"><span class="material-symbols-outlined" style="margin-left: 24px;">account_tree</span> <span class="tree-text">Projetos</span></li>`;
 
-            let projList = [...appData.projetos];
-            if(appData.order['projetos']) projList.sort((a,b) => (appData.order['projetos'].indexOf(a.nome) === -1 ? 999 : appData.order['projetos'].indexOf(a.nome)) - (appData.order['projetos'].indexOf(b.nome) === -1 ? 999 : appData.order['projetos'].indexOf(b.nome)));
-
-            projList.forEach(p => {
-                let isProjActive = currentLevel > 0 && currentPathArr[0] === p.nome;
-                let projIsExactLevel = currentLevel === 1 && isProjActive;
-                let pathKeyProj = p.nome;
-                let hasSub = appData.subprojetos[p.nome] && appData.subprojetos[p.nome].length > 0;
-                let isCollapsedProj = collapsedPaths.has(pathKeyProj);
-                let folderIconProj = isCollapsedProj ? 'folder' : 'folder_open';
-
-                html += `<ul class="tree-branch"><li class="tree-item ${projIsExactLevel ? 'active' : ''}">`;
-                if (hasSub) html += `<span class="material-symbols-outlined toggle-icon" onclick="toggleNode(event, '${pathKeyProj}')">${isCollapsedProj ? 'chevron_right' : 'expand_more'}</span>`;
-                else html += `<span class="material-symbols-outlined toggle-icon" style="opacity: 0; pointer-events: none;">remove</span>`;
-                html += `<span class="material-symbols-outlined folder-icon" onclick="toggleNode(event, '${pathKeyProj}')">${folderIconProj}</span><span class="tree-text" onclick="navegarPelaArvore(['${p.nome}'])">${p.nome}</span></li>`;
-
-                if (hasSub && !isCollapsedProj) {
-                    let subList = [...appData.subprojetos[p.nome]];
-                    let orderKey = 'subprojetos_' + p.nome;
-                    if(appData.order[orderKey]) subList.sort((a,b) => (appData.order[orderKey].indexOf(a.nome) === -1 ? 999 : appData.order[orderKey].indexOf(a.nome)) - (appData.order[orderKey].indexOf(b.nome) === -1 ? 999 : appData.order[orderKey].indexOf(b.nome)));
-                    html += `<ul class="tree-branch">`;
-                    subList.forEach(sub => {
-                        let isSubActive = currentLevel > 1 && isProjActive && currentPathArr[1] === sub.nome;
-                        let subIsExactLevel = currentLevel === 2 && isSubActive;
-                        let pathKeySub = p.nome + '/' + sub.nome;
-                        let hasPastas = appData.pastas[pathKeySub] && appData.pastas[pathKeySub].length > 0;
-                        let isCollapsedSub = collapsedPaths.has(pathKeySub);
-                        let folderIconSub = isCollapsedSub ? 'folder' : 'folder_open';
-
-                        html += `<li class="tree-item ${subIsExactLevel ? 'active' : ''}">`;
-                        if (hasPastas) html += `<span class="material-symbols-outlined toggle-icon" onclick="toggleNode(event, '${pathKeySub}')">${isCollapsedSub ? 'chevron_right' : 'expand_more'}</span>`;
-                        else html += `<span class="material-symbols-outlined toggle-icon" style="opacity: 0; pointer-events: none;">remove</span>`;
-                        html += `<span class="material-symbols-outlined folder-icon" onclick="toggleNode(event, '${pathKeySub}')">${folderIconSub}</span><span class="tree-text" onclick="navegarPelaArvore(['${p.nome}', '${sub.nome}'])">${sub.nome}</span></li>`;
-
-                        if (hasPastas && !isCollapsedSub) {
-                            html += `<ul class="tree-branch">`;
-                            appData.pastas[pathKeySub].forEach(pasta => {
-                                let isPastaActive = currentLevel === 3 && isSubActive && currentPathArr[2] === pasta;
-                                html += `<li class="tree-item ${isPastaActive ? 'active' : ''}"><span class="material-symbols-outlined toggle-icon" style="opacity: 0; pointer-events: none;">remove</span><span class="material-symbols-outlined folder-icon">folder</span><span class="tree-text" onclick="navegarPelaArvore(['${p.nome}', '${sub.nome}', '${pasta}'])">${pasta}</span></li>`;
-                            });
-                            html += `</ul>`;
-                        }
+            function buildTree(pathStr, level) {
+                let folders = appData.pastasContent[pathStr] ? [...appData.pastasContent[pathStr]] : [];
+                if (folders.length === 0) return '';
+                
+                let orderKey = pathStr === '' ? 'projetos' : pathStr;
+                if(appData.order[orderKey]) {
+                    folders.sort((a,b) => {
+                        let iA = appData.order[orderKey].indexOf(a);
+                        let iB = appData.order[orderKey].indexOf(b);
+                        return (iA === -1 ? 999 : iA) - (iB === -1 ? 999 : iB);
                     });
-                    html += `</ul>`;
                 }
-                html += `</ul>`;
-            });
+
+                let res = `<ul class="tree-branch">`;
+                folders.forEach(fName => {
+                    let nextPath = pathStr === '' ? fName : pathStr + '/' + fName;
+                    let isActive = currentPathArr.slice(0, level + 1).join('/') === nextPath;
+                    let isExactLevel = currentLevel === level + 1 && isActive;
+                    
+                    let hasSub = (appData.pastasContent[nextPath] && appData.pastasContent[nextPath].length > 0);
+                    let isCollapsed = !collapsedPaths.has(nextPath);
+                    let folderIcon = isCollapsed ? 'folder' : 'folder_open';
+
+                    res += `<li class="tree-item ${isExactLevel ? 'active' : ''}">`;
+                    if (hasSub) res += `<span class="material-symbols-outlined toggle-icon" onclick="toggleNode(event, '${nextPath}')">${isCollapsed ? 'chevron_right' : 'expand_more'}</span>`;
+                    else res += `<span class="material-symbols-outlined toggle-icon" style="opacity: 0; pointer-events: none;">remove</span>`;
+                    
+                    let pathArrStr = `['${nextPath.split('/').join("','")}']`;
+                    res += `<span class="material-symbols-outlined folder-icon" onclick="toggleNode(event, '${nextPath}')">${folderIcon}</span><span class="tree-text" onclick="navegarPelaArvore(${pathArrStr})">${fName}</span></li>`;
+
+                    if (hasSub && !isCollapsed) {
+                        res += buildTree(nextPath, level + 1);
+                    }
+                });
+                res += `</ul>`;
+                return res;
+            }
+
+            html += buildTree('', 0);
             html += '</ul>';
             container.innerHTML = html;
         }
 
-        function getPathString() { return currentPathArr.join('/'); }
-        function goLevel(index) { currentPathArr = currentPathArr.slice(0, index); currentLevel = index; expandPath(currentPathArr); renderTree(); renderExplorer(); }
-        function entrarNaPasta(nome) { currentPathArr.push(nome); currentLevel++; expandPath(currentPathArr); renderTree(); renderExplorer(); }
-
+        // 🔹 EXPLORER COM NOVOS BOTÕES (LUPA/LAPIS E PREVIEW) 🔹
         function renderExplorer() {
             const container = document.getElementById('explorer-grid');
             const toolbar = document.getElementById('explorer-toolbar');
@@ -1042,151 +1068,136 @@
                     <span class="role-badge-inline role-${isAdmin ? 'admin' : 'leitor'}">${isAdmin ? 'Administrador' : 'Leitor Padrão'}</span>
                 </div>`;
             
-            let actionsHtml = '';
+            let btnNovo = '';
+            if (currentLevel === 0) btnNovo = canCreate ? `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">add</span> Novo Projeto</button>` : '';
+            else if (currentLevel === 1) btnNovo = canCreate ? `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">add</span> Novo Subprojeto</button>` : '';
+            else btnNovo = canCreate ? `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">create_new_folder</span> Nova Pasta</button>` : '';
 
-            if (currentLevel === 0) {
-                if(isAdmin) actionsHtml = `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">add</span> Novo Projeto</button>`;
-                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
+            let btnUpload = canUpload ? `<button class="btn btn-success" onclick="abrirModalUpload()"><span class="material-symbols-outlined">upload</span> Upload</button>` : '';
 
-                let lista = [...appData.projetos];
-                if(appData.order['projetos']) lista.sort((a,b) => (appData.order['projetos'].indexOf(a.nome) === -1 ? 999 : appData.order['projetos'].indexOf(a.nome)) - (appData.order['projetos'].indexOf(b.nome) === -1 ? 999 : appData.order['projetos'].indexOf(b.nome)));
-                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Nenhum projeto.</div>`;
+            toolbar.innerHTML = `<div>${indicatorHtml}</div><div style="display:flex; gap:8px;">${btnNovo}${btnUpload}</div>`;
+
+            let pathStr = getPathString();
+            let foldersAqui = appData.pastasContent[pathStr] ? [...appData.pastasContent[pathStr]] : [];
+            let orderKey = pathStr === '' ? 'projetos' : pathStr;
+            
+            if(appData.order[orderKey]) {
+                foldersAqui.sort((a,b) => (appData.order[orderKey].indexOf(a) === -1 ? 999 : appData.order[orderKey].indexOf(a)) - (appData.order[orderKey].indexOf(b) === -1 ? 999 : appData.order[orderKey].indexOf(b)));
+            }
+            
+            let arquivosAqui = appData.arquivos.filter(f => f.path === pathStr);
+
+            if(foldersAqui.length === 0 && arquivosAqui.length === 0) {
+                container.innerHTML = `<div class="empty-state">Este diretório está vazio.</div>`;
+                return;
+            }
+            
+            foldersAqui.forEach(p => {
+                let nextPath = pathStr === '' ? p : pathStr + '/' + p;
+                let thumbKey = nextPath.replace(/\//g, '_');
+                let thumb = appData.thumbs ? appData.thumbs[thumbKey] : null;
+
+                let renameBtn = canRename ? `<button class="rename-btn" onclick="renomearItem(event, '${p}')" title="Renomear"><span class="material-symbols-outlined" style="font-size: 16px;">edit</span></button>` : '';
+                let dragAttr = canCreate ? `draggable="true" ondragstart="dragStartSort(event, '${p}', ${currentLevel})" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${p}', ${currentLevel})"` : '';
                 
-                lista.forEach(p => {
-                    let thumbHtml = p.thumb ? `<img src="${p.thumb}" class="card-thumb">` : `<div class="card-thumb"><span class="material-symbols-outlined">landscape</span></div>`;
-                    let dragAttr = isAdmin ? `draggable="true" ondragstart="dragStartSort(event, '${p.nome}', 0)" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${p.nome}', 0)"` : '';
-                    let renameBtn = isAdmin ? `<button class="rename-btn" onclick="renomearItem(event, '${p.nome}')" title="Renomear"><span class="material-symbols-outlined" style="font-size: 16px;">edit</span></button>` : '';
-                    
+                if (currentLevel < 2) {
+                    let thumbHtml = thumb ? `<img src="${thumb}" class="card-thumb">` : `<div class="card-thumb"><span class="material-symbols-outlined">${currentLevel === 0 ? 'landscape' : 'collections_bookmark'}</span></div>`;
                     container.innerHTML += `
-                        <div class="card-vertical" ${dragAttr} onclick="entrarNaPasta('${p.nome}')">
+                        <div class="card-vertical" ${dragAttr} onclick="entrarNaPasta('${p}')">
                             ${thumbHtml}
                             <div class="card-title-wrapper">
-                                <div class="card-title" title="${p.nome}">${p.nome}</div>
-                                ${renameBtn}
-                            </div>
-                            ${isAdmin ? `<div class="drag-hint">Soltar Imagem/Ordem</div>` : ''}
-                        </div>`;
-                });
-            } 
-            else if (currentLevel === 1) {
-                if(canCreate) actionsHtml = `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">add</span> Novo Subprojeto</button>`;
-                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
-
-                let projName = currentPathArr[0];
-                let lista = appData.subprojetos[projName] ? [...appData.subprojetos[projName]] : [];
-                if(appData.order['subprojetos_' + projName]) lista.sort((a,b) => (appData.order['subprojetos_' + projName].indexOf(a.nome) === -1 ? 999 : appData.order['subprojetos_' + projName].indexOf(a.nome)) - (appData.order['subprojetos_' + projName].indexOf(b.nome) === -1 ? 999 : appData.order['subprojetos_' + projName].indexOf(b.nome)));
-                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Nenhum subprojeto.</div>`;
-                
-                lista.forEach(p => {
-                    let thumbHtml = p.thumb ? `<img src="${p.thumb}" class="card-thumb">` : `<div class="card-thumb"><span class="material-symbols-outlined">collections_bookmark</span></div>`;
-                    let dragAttr = canCreate ? `draggable="true" ondragstart="dragStartSort(event, '${p.nome}', 1)" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${p.nome}', 1)"` : '';
-                    let renameBtn = canRename ? `<button class="rename-btn" onclick="renomearItem(event, '${p.nome}')" title="Renomear"><span class="material-symbols-outlined" style="font-size: 16px;">edit</span></button>` : '';
-
-                    container.innerHTML += `
-                        <div class="card-vertical" ${dragAttr} onclick="entrarNaPasta('${p.nome}')">
-                            ${thumbHtml}
-                            <div class="card-title-wrapper">
-                                <div class="card-title" title="${p.nome}">${p.nome}</div>
+                                <div class="card-title" title="${p}">${p}</div>
                                 ${renameBtn}
                             </div>
                             ${canCreate ? `<div class="drag-hint">Soltar Imagem/Ordem</div>` : ''}
                         </div>`;
-                });
-            }
-            else if (currentLevel === 2) {
-                if(canCreate) actionsHtml = `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">create_new_folder</span> Nova Pasta</button>`;
-                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
-
-                let pathKey = getPathString();
-                let lista = appData.pastas[pathKey] || [];
-                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Nenhuma pasta aqui.</div>`;
-                lista.forEach(n => {
-                    let renameBtn = canRename ? `<button class="rename-btn" onclick="renomearItem(event, '${n}')" title="Renomear"><span class="material-symbols-outlined" style="font-size: 16px;">edit</span></button>` : '';
+                } else {
                     container.innerHTML += `
-                        <div class="folder-card" onclick="entrarNaPasta('${n}')">
+                        <div class="folder-card" ${dragAttr} onclick="entrarNaPasta('${p}')">
                             <span class="material-symbols-outlined" style="font-size:48px; color:var(--primary); margin-bottom:8px;">folder</span>
                             <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                                <strong style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="${n}">${n}</strong>
+                                <strong style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="${p}">${p}</strong>
                                 ${renameBtn}
                             </div>
+                            ${canCreate ? `<div class="drag-hint" style="margin-top: 0px; font-size:10px;">Reordenar</div>` : ''}
                         </div>`;
-                });
-            }
-            else if (currentLevel === 3) {
-                if(canUpload) actionsHtml = `<button class="btn btn-success" onclick="abrirModalUpload()"><span class="material-symbols-outlined">upload</span> Upload de Arquivos</button>`;
-                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
+                }
+            });
 
-                let pathKey = getPathString();
-                let lista = appData.arquivos.filter(f => f.path === pathKey);
-                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Pasta vazia.</div>`;
+            let svgDrive = `<svg width="14" height="14" viewBox="0 0 87.3 78"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.5 2 27.35 3.1 26.55 4.5l-25.35 43.9c-.8 1.4-1.2 2.95-1.2 4.5h27.5L43.65 25z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 23.75-41.15c.8-1.4 1.2-2.95 1.2-4.5H55.9l5.85 10.15 11.8 20.45-13.75 23.8h13.75z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56 0.4 54.4 0 52.8 0H34.5c-1.6 0-3.2.4-4.6 1.2L43.65 25z" fill="#00832d"/><path d="M55.9 25H27.5l-13.75 23.8 13.75 23.8h54.9L68.65 48.8 55.9 25z" fill="#2684fc"/><path d="M73.55 76.8L59.8 53 46.05 76.8h27.5z" fill="#ffba00"/></svg>`;
+            
+            arquivosAqui.forEach((f, idx) => {
+                let mainBadge = getFileBadge(f.nome);
+                let auxiliaresHTML = "";
+                if(f.auxiliares.length > 0) {
+                    auxiliaresHTML = `<div class="aux-container"><div class="aux-title">Anexos (${f.auxiliares.length})</div>`;
+                    f.auxiliares.forEach(aux => {
+                        let auxBadge = getFileBadge(aux.nome);
+                        let dragAux = canUpload ? `draggable="true" ondragstart="dragStartAux(event, '${aux.id}', '${f.nome}')"` : '';
+                        
+                        // Sistema de PREVIEW na Hover do anexo
+                        let auxThumbUrl = `https://drive.google.com/thumbnail?id=${aux.id}&sz=w400`;
+
+                        let btnAcoesAux = `
+                        <div style="display:flex; gap:4px;">
+                            <a href="${aux.url}" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px;" title="Baixar"><span class="material-symbols-outlined" style="font-size:16px;">download</span></button></a>
+                            <a href="https://drive.google.com/file/d/${aux.id}/view" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px; color: var(--primary);" title="Ver no Drive">${svgDrive}</button></a>
+                        </div>`;
+
+                        auxiliaresHTML += `
+                        <div class="aux-item" ${dragAux}>
+                            <div class="aux-preview"><img src="${auxThumbUrl}" onerror="this.style.display='none'"></div>
+                            <span class="aux-name">${auxBadge} <span title="${aux.nome}">${aux.nome}</span></span>${btnAcoesAux}
+                        </div>`;
+                    });
+                    auxiliaresHTML += `</div>`;
+                }
                 
-                let svgDrive = `<svg width="14" height="14" viewBox="0 0 87.3 78"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.5 2 27.35 3.1 26.55 4.5l-25.35 43.9c-.8 1.4-1.2 2.95-1.2 4.5h27.5L43.65 25z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 23.75-41.15c.8-1.4 1.2-2.95 1.2-4.5H55.9l5.85 10.15 11.8 20.45-13.75 23.8h13.75z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56 0.4 54.4 0 52.8 0H34.5c-1.6 0-3.2.4-4.6 1.2L43.65 25z" fill="#00832d"/><path d="M55.9 25H27.5l-13.75 23.8 13.75 23.8h54.9L68.65 48.8 55.9 25z" fill="#2684fc"/><path d="M73.55 76.8L59.8 53 46.05 76.8h27.5z" fill="#ffba00"/></svg>`;
+                let driveViewUrl = `https://drive.google.com/file/d/${f.id}/view`;
+                let dragAttr = canUpload ? `draggable="true" ondragstart="dragStartFile(event, '${f.id}', '${f.nome}')" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${f.nome}', 'arquivo')"` : '';
+                
+                let largeThumbUrl = f.thumbUrl.replace('sz=w800', 'sz=w1920');
+                
+                let thumbButtons = canUpload ? `
+                    <button class="zoom-btn" onclick="abrirModalZoom('${largeThumbUrl}')" title="Ampliar Imagem">
+                        <span class="material-symbols-outlined">zoom_in</span>
+                    </button>
+                    <button class="edit-btn" onclick="iniciarSubstituicao(event, '${f.nome}')" title="Substituir Arquivo">
+                        <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+                    </button>` : `
+                    <button class="zoom-btn" onclick="abrirModalZoom('${largeThumbUrl}')" title="Ampliar Imagem">
+                        <span class="material-symbols-outlined">zoom_in</span>
+                    </button>`;
 
-                lista.forEach((f, idx) => {
-                    let mainBadge = getFileBadge(f.nome);
-                    let auxiliaresHTML = "";
-                    if(f.auxiliares.length > 0) {
-                        auxiliaresHTML = `<div class="aux-container"><div class="aux-title">Anexos (${f.auxiliares.length})</div>`;
-                        f.auxiliares.forEach(aux => {
-                            let auxBadge = getFileBadge(aux.nome);
-                            let dragAux = canUpload ? `draggable="true" ondragstart="dragStartAux(event, '${aux.id}', '${f.nome}')"` : '';
-                            
-                            let btnAcoesAux = `
-                            <div style="display:flex; gap:4px;">
-                                <a href="${aux.url}" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px;" title="Baixar"><span class="material-symbols-outlined" style="font-size:16px;">download</span></button></a>
-                                <a href="https://drive.google.com/file/d/${aux.id}/view" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px; color: var(--primary);" title="Ver no Drive">${svgDrive}</button></a>
-                            </div>`;
-
-                            auxiliaresHTML += `<div class="aux-item" ${dragAux}><span class="aux-name">${auxBadge} <span title="${aux.nome}">${aux.nome}</span></span>${btnAcoesAux}</div>`;
-                        });
-                        auxiliaresHTML += `</div>`;
-                    }
-                    
-                    let driveViewUrl = `https://drive.google.com/file/d/${f.id}/view`;
-                    let dragAttr = canUpload ? `draggable="true" ondragstart="dragStartFile(event, '${f.id}', '${f.nome}')" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${f.nome}', 3)"` : '';
-                    let replaceBtn = canUpload ? `<button class="replace-btn" onclick="iniciarSubstituicao(event, '${f.nome}')"><span class="material-symbols-outlined" style="font-size: 18px;">find_replace</span> Substituir</button>` : '';
-
-                    container.innerHTML += `
-                        <div class="file-card" ${dragAttr}>
-                            <div style="position: absolute; top: 12px; left: 12px; z-index: 2;">${mainBadge}</div>
-                            <div class="star-badge"><span class="material-symbols-outlined" style="font-size:14px; font-variation-settings: 'FILL' 1;">star</span> v${f.versao}.0</div>
-                            <div class="file-thumb-wrapper">
-                                <span class="material-symbols-outlined file-thumb-fallback">draft</span>
-                                <img src="${f.thumbUrl}" onload="this.style.opacity=1" onerror="this.style.opacity=0">
-                                ${replaceBtn}
-                            </div>
-                            <div class="file-name" title="${f.nome}">${f.nome}</div>
-                            <div class="file-date">${f.data}</div>
-                            
-                            <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
-                                <a href="${f.downloadUrl}" target="_blank" style="width:100%; text-decoration:none;">
-                                    <button class="btn btn-primary" style="width:100%;"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Baixar</button>
-                                </a>
-                                <a href="${driveViewUrl}" target="_blank" style="width:100%; text-decoration:none;">
-                                    <button class="btn btn-drive" style="width:100%;">
-                                        <svg width="16" height="16" viewBox="0 0 87.3 78" style="vertical-align: middle; margin-right: 4px;">
-                                            <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066da"/>
-                                            <path d="M43.65 25L29.9 1.2C28.5 2 27.35 3.1 26.55 4.5l-25.35 43.9c-.8 1.4-1.2 2.95-1.2 4.5h27.5L43.65 25z" fill="#00ac47"/>
-                                            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 23.75-41.15c.8-1.4 1.2-2.95 1.2-4.5H55.9l5.85 10.15 11.8 20.45-13.75 23.8h13.75z" fill="#ea4335"/>
-                                            <path d="M43.65 25L57.4 1.2C56 0.4 54.4 0 52.8 0H34.5c-1.6 0-3.2.4-4.6 1.2L43.65 25z" fill="#00832d"/>
-                                            <path d="M55.9 25H27.5l-13.75 23.8 13.75 23.8h54.9L68.65 48.8 55.9 25z" fill="#2684fc"/>
-                                            <path d="M73.55 76.8L59.8 53 46.05 76.8h27.5z" fill="#ffba00"/>
-                                        </svg> Ver no Drive
-                                    </button>
-                                </a>
-                            </div>
-                            ${canUpload ? `<div class="drag-hint">Agrupar Anexo</div>` : ''}
-                            ${auxiliaresHTML}
-                        </div>`;
-                });
-            }
+                container.innerHTML += `
+                    <div class="file-card" ${dragAttr}>
+                        <div style="position: absolute; top: 12px; left: 12px; z-index: 2;">${mainBadge}</div>
+                        <div class="star-badge"><span class="material-symbols-outlined" style="font-size:14px; font-variation-settings: 'FILL' 1;">star</span> v${f.versao}.0</div>
+                        <div class="file-thumb-wrapper">
+                            <span class="material-symbols-outlined file-thumb-fallback">draft</span>
+                            <img src="${f.thumbUrl}" onload="this.style.opacity=1" onerror="this.style.opacity=0">
+                            ${thumbButtons}
+                        </div>
+                        <div class="file-name" title="${f.nome}">${f.nome}</div>
+                        <div class="file-date">${f.data}</div>
+                        
+                        <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                            <a href="${f.downloadUrl}" target="_blank" style="width:100%; text-decoration:none;">
+                                <button class="btn btn-primary" style="width:100%;"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Baixar</button>
+                            </a>
+                            <a href="${driveViewUrl}" target="_blank" style="width:100%; text-decoration:none;">
+                                <button class="btn btn-drive" style="width:100%;">
+                                    ${svgDrive} Ver no Drive
+                                </button>
+                            </a>
+                        </div>
+                        ${canUpload ? `<div class="drag-hint">Agrupar Anexo</div>` : ''}
+                        ${auxiliaresHTML}
+                    </div>`;
+            });
         }
 
-        function criarDiretorioAtual() {
-            let n = prompt("Nome:");
-            if(n) enviarComando({ acao: 'criarDiretorio', path: getPathString(), nomePasta: n }, "Criando...");
-        }
-
+        // 🔹 VALIDAÇÃO DE EXTENSÃO NA SUBSTITUIÇÃO 🔹
         let arquivoParaSubstituir = "";
         function iniciarSubstituicao(e, targetName) {
             e.stopPropagation(); 
@@ -1196,7 +1207,19 @@
 
         document.getElementById('file-replace-input').addEventListener('change', function(e) {
             let file = e.target.files[0];
-            if(file) adicionarFilaUpload(file, getPathString(), arquivoParaSubstituir, false, true, true);
+            if(file) {
+                let extOld = arquivoParaSubstituir.split('.').pop().toLowerCase();
+                let extNew = file.name.split('.').pop().toLowerCase();
+                
+                if(extOld !== extNew) {
+                    alert(`Upload bloqueado!\nA extensão do arquivo selecionado (.${extNew}) é diferente da original (.${extOld}).`);
+                    this.value = '';
+                    return;
+                }
+
+                let comentario = prompt("Adicione um comentário para essa substituição (Opcional):") || "";
+                adicionarFilaUpload(file, getPathString(), arquivoParaSubstituir, false, true, true, comentario);
+            }
             this.value = '';
         });
 
@@ -1211,7 +1234,6 @@
         
         function dropGrid(e) {
             e.preventDefault(); document.body.classList.remove('dragging-aux');
-            if (currentLevel !== 3) return; 
             let dataStr = e.dataTransfer.getData("text/plain");
             if (!dataStr) return;
             let data = JSON.parse(dataStr);
@@ -1223,17 +1245,18 @@
             let dataStr = e.dataTransfer.getData("text/plain");
 
             if(!dataStr && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                if (levelDrop === 0 || levelDrop === 1) {
+                if (levelDrop !== 'arquivo') {
                     let file = e.dataTransfer.files[0];
-                    let thumbKey = levelDrop === 0 ? targetName : currentPathArr[0] + '_' + targetName;
+                    let nextPath = currentPathArr.length === 0 ? targetName : currentPathArr.join('/') + '/' + targetName;
+                    let thumbKey = nextPath.replace(/\//g, '_');
                     const reader = new FileReader();
                     reader.onload = r => { enviarComando({ acao: 'setThumbnail', thumbKey: thumbKey, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Atualizando capa..."); };
                     reader.readAsDataURL(file);
                     return;
-                }
-                if (levelDrop === 3) {
+                } else {
                     let file = e.dataTransfer.files[0];
-                    adicionarFilaUpload(file, getPathString(), targetName, true, false, true);
+                    let comentario = prompt("Adicione um comentário ao anexar este arquivo (Opcional):") || "";
+                    adicionarFilaUpload(file, getPathString(), targetName, true, false, true, comentario);
                     return;
                 }
             }
@@ -1241,11 +1264,10 @@
             if (!dataStr) return;
             let data = JSON.parse(dataStr);
             if(data.action === 'sort' && dragSrcName !== targetName && levelDrop === dragSrcLevel) {
-                let orderKey = levelDrop === 0 ? 'projetos' : 'subprojetos_' + currentPathArr[0];
-                if(!appData.order[orderKey]) {
-                    if(levelDrop === 0) appData.order[orderKey] = appData.projetos.map(p => p.nome);
-                    if(levelDrop === 1) appData.order[orderKey] = appData.subprojetos[currentPathArr[0]].map(p => p.nome);
-                }
+                let pathStr = getPathString();
+                let orderKey = pathStr === '' ? 'projetos' : pathStr;
+                if(!appData.order[orderKey]) appData.order[orderKey] = appData.pastasContent[pathStr];
+                
                 let arr = appData.order[orderKey];
                 let fromIdx = arr.indexOf(dragSrcName);
                 let toIdx = arr.indexOf(targetName);
@@ -1257,7 +1279,7 @@
                 return;
             }
 
-            if (levelDrop === 3) {
+            if (levelDrop === 'arquivo') {
                 if (data.action === 'file' && data.name !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Agrupando...");
                 else if (data.action === 'aux' && data.parentName !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Movendo anexo...");
             }
@@ -1311,8 +1333,12 @@
                 let msgDisplay = l.msg;
                 let emailStr = l.email ? `onclick="verPerfilHistorico('${l.email}')" style="cursor:pointer; color:var(--primary); text-decoration:underline;" title="Ver Perfil"` : '';
                 
+                // 🔹 MOSTRAR O BOTÃO DE COMENTÁRIO 🔹
+                let safeComment = (l.comentario || "").replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                let commentHtml = l.comentario ? `<button class="icon-btn" style="display:inline-flex; width:24px; height:24px; padding:4px; margin-left:8px; vertical-align:middle; background:var(--surface-color); border:1px solid var(--border-color);" onclick="alert('${safeComment}')" title="Ver Comentário do Upload"><span class="material-symbols-outlined" style="font-size:14px; color:var(--primary);">chat</span></button>` : '';
+                
                 tbody.innerHTML += `<tr>
-                    <td>${msgDisplay}</td>
+                    <td>${msgDisplay} ${commentHtml}</td>
                     <td style="font-weight: 500; font-size: 13px;">
                         <div style="display:flex; align-items:center; gap:4px;">
                             <span class="material-symbols-outlined" style="font-size:16px;">person</span> 
