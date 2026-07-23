@@ -15,7 +15,7 @@
         body.dark-mode { --bg-color: #0e0e0e; --container-bg: #1e1f20; --text-color: #e3e3e3; --text-muted: #c4c7c5; --navbar-bg: #1e1f20; --navbar-text: #e3e3e3; --border-color: #444746; --surface-color: #282a2c; --primary: #a8c7fa; --on-primary: #062e6f; --secondary-container: #4a4458; --on-secondary-container: #e8def8; --error: #f2b8b5; --on-error: #601410; --tertiary: #9ccaf9; }
         body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
         
-        .navbar { background-color: var(--navbar-bg); color: var(--navbar-text); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 64px; border-bottom: 1px solid var(--border-color); }
+        .navbar { background-color: var(--navbar-bg); color: var(--navbar-text); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 64px; border-bottom: 1px solid var(--border-color); z-index: 1000; position: relative;}
         .navbar-brand { font-size: 22px; font-weight: 500; display: flex; align-items: center; gap: 8px; color: var(--primary); }
         .nav-right { display: flex; align-items: center; gap: 16px; }
         .nav-links { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; gap: 8px; }
@@ -56,6 +56,7 @@
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-primary { background-color: var(--primary); color: var(--on-primary); }
         .btn-secondary { background-color: var(--surface-color); color: var(--text-color); border: 1px solid var(--border-color); }
+        .btn-success { background-color: #1ea446; color: #ffffff; }
         .btn-danger { background-color: var(--error); color: var(--on-error); }
         .btn-warning { background-color: var(--tertiary); color: var(--on-primary); }
         .btn-drive { background-color: #0b3c78; color: #ffffff; border: none; margin-top: 4px; }
@@ -156,7 +157,7 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(2px); cursor: pointer;}
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 4000; backdrop-filter: blur(2px); }
         .modal-overlay.active, #loading-overlay.active { display: flex; }
-        .modal-content { background: var(--container-bg); color: var(--text-color); padding: 32px; border-radius: 28px; width: 400px; box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14); max-height: 90vh; overflow-y: auto; cursor: default; position: relative;}
+        .modal-content { background: var(--container-bg); color: var(--text-color); padding: 32px; border-radius: 28px; width: 450px; box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14); max-height: 90vh; overflow-y: auto; cursor: default; position: relative;}
         .modal-content select { width: 100%; padding: 12px; margin: 16px 0 32px 0; background: var(--surface-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px;}
         
         .close-btn { position: absolute; top: 16px; right: 16px; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 4px; border-radius: 50%; transition: 0.2s; display: flex;}
@@ -173,10 +174,7 @@
         .profile-pic-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1; }
         .profile-pic-picker span { z-index: 0; color: var(--text-muted); font-size: 32px; }
 
-        #login-screen { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 3000; 
-            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://drive.google.com/thumbnail?id=1OoAJJuiqNdp8s_HQ8XJHOIfJaCLvtVSg&sz=w1920') no-repeat center center / cover; 
-        }
+        #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 3000; background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://drive.google.com/thumbnail?id=1OoAJJuiqNdp8s_HQ8XJHOIfJaCLvtVSg&sz=w1920') no-repeat center center / cover; }
         .login-card { background: var(--container-bg); color: var(--text-color); padding: 40px; border-radius: 28px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; z-index: 3001; border: 1px solid rgba(255,255,255,0.05); }
         .login-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
         .login-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
@@ -197,7 +195,25 @@
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loading-box { background: var(--container-bg); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 40px; padding: 40px; border: 1px dashed var(--border-color); border-radius: 16px; grid-column: 1 / -1; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+        /* 🔹 FILA DE UPLOADS (MODAL E TRACKER) 🔹 */
+        .file-list { max-height: 250px; overflow-y: auto; margin-top: 16px; text-align: left; padding-right: 4px;}
+        .upload-item { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px;}
+        .upload-item-header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500;}
+        .upload-item-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+        .progress-bar-bg { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
+        
+        #upload-tracker { position: fixed; bottom: 24px; right: 24px; width: 340px; background: var(--container-bg); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 5000; display: none; flex-direction: column; border: 1px solid var(--border-color); overflow: hidden;}
+        .tracker-header { background: var(--primary); color: white; padding: 12px 16px; font-weight: 500; font-size: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;}
+        .tracker-header:hover { filter: brightness(1.1); }
+        .tracker-body { max-height: 250px; overflow-y: auto; padding: 12px; background: var(--container-bg);}
+
+        .status-pending { color: var(--text-muted); }
+        .status-uploading { color: var(--primary); }
+        .status-saving { color: #f9ab00; }
+        .status-done { color: #1ea446; }
+        .status-error { color: var(--error); }
     </style>
 </head>
 <body>
@@ -220,12 +236,10 @@
     <!-- MODAL PERFIL -->
     <div id="modal-perfil" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-perfil')">
         <div class="modal-content" style="text-align: center; position:relative;">
-            
             <button class="close-btn" id="btn-fechar-modal-perfil" onclick="fecharModalPerfil()"><span class="material-symbols-outlined">close</span></button>
             <button id="btn-admin-panel" class="btn btn-warning" onclick="abrirAdminPanel()" style="display:none; position: absolute; top: 16px; left: 16px; padding: 8px;" title="Gerenciar Usuários">
                 <span class="material-symbols-outlined" style="font-size:20px;">manage_accounts</span>
             </button>
-
             <h2 id="modal-perfil-titulo" style="margin-bottom:24px; margin-top: 10px;">Perfil</h2>
             
             <div style="position:relative; width: 100px; margin: 0 auto 24px auto;" id="div-profile-pic-container">
@@ -237,19 +251,9 @@
             </div>
 
             <input type="file" id="profile-pic-input" style="display:none" accept="image/*">
-            
-            <div class="input-group">
-                <label>E-mail</label>
-                <input type="text" id="perfil-email" disabled>
-            </div>
-            <div class="input-group">
-                <label>Nome</label>
-                <input type="text" id="perfil-nome" placeholder="Ex: João Silva">
-            </div>
-            <div class="input-group">
-                <label>Cargo</label>
-                <input type="text" id="perfil-cargo" placeholder="Ex: Diretor de Arte">
-            </div>
+            <div class="input-group"><label>E-mail</label><input type="text" id="perfil-email" disabled></div>
+            <div class="input-group"><label>Nome</label><input type="text" id="perfil-nome" placeholder="Ex: João Silva"></div>
+            <div class="input-group"><label>Cargo</label><input type="text" id="perfil-cargo" placeholder="Ex: Diretor de Arte"></div>
             
             <div style="display: flex; gap: 12px; margin-top: 28px; justify-content: center; flex-wrap: wrap;" id="botoes-edicao-perfil">
                 <button class="btn btn-secondary" onclick="fecharModalPerfil()" id="btn-cancelar-perfil">Cancelar</button>
@@ -264,7 +268,44 @@
         </div>
     </div>
 
-    <!-- TELA DE LOADING DA BARRA DE PROGRESSO -->
+    <!-- 🔹 NOVO: MODAL DE UPLOADS MULTIPLOS 🔹 -->
+    <div id="modal-upload" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-upload')">
+        <div class="modal-content" style="text-align: center;">
+            <button class="close-btn" onclick="fecharModalUpload()"><span class="material-symbols-outlined">close</span></button>
+            <h2 style="margin-top:10px;">Fila de Uploads</h2>
+            <p class="subtitle">Adicione arquivos para enviar em lote para esta pasta.</p>
+            
+            <input type="file" id="multi-file-input" multiple style="display:none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf, .zip, .rar">
+            <button class="btn btn-secondary" onclick="document.getElementById('multi-file-input').click()" style="width:100%; margin-bottom: 8px;">
+                <span class="material-symbols-outlined">note_add</span> Selecionar Arquivos
+            </button>
+            
+            <div id="upload-modal-list" class="file-list">
+                <!-- Arquivos injetados aqui -->
+            </div>
+            
+            <div style="display:flex; justify-content: space-between; margin-top: 24px; gap:8px;">
+                <button class="btn btn-secondary" style="flex:1;" onclick="minimizarUploadTracker()">Segundo Plano</button>
+                <button class="btn btn-success" style="flex:1;" id="btn-start-uploads" onclick="iniciarUploadsFila()" disabled>Iniciar Fila</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 NOVO: TRACKER EM SEGUNDO PLANO 🔹 -->
+    <div id="upload-tracker">
+        <div class="tracker-header" onclick="toggleTrackerBody()">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="material-symbols-outlined" style="font-size:18px;">cloud_upload</span>
+                <span id="tracker-title">0 uploads pendentes</span>
+            </div>
+            <span class="material-symbols-outlined" id="tracker-icon">expand_more</span>
+        </div>
+        <div class="tracker-body" id="tracker-list" style="display:none;">
+            <!-- Arquivos injetados aqui -->
+        </div>
+    </div>
+
+    <!-- OVERLAY GENERICO DE LOADING -->
     <div id="loading-overlay">
         <div class="loading-box">
             <span class="spinner"></span>
@@ -333,9 +374,7 @@
                         <div class="breadcrumbs" id="breadcrumbs-container">
                             <span class="active-crumb"><span class="material-symbols-outlined">folder_open</span> Projetos</span>
                         </div>
-                        <div class="toolbar" id="explorer-toolbar">
-                            <!-- Injetado via JS -->
-                        </div>
+                        <div class="toolbar" id="explorer-toolbar"></div>
                         <div class="grid-container" id="explorer-grid"></div>
                     </div>
                 </div>
@@ -375,7 +414,6 @@
         </div>
     </div>
 
-    <input type="file" id="file-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf, .zip, .rar">
     <input type="file" id="file-replace-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf, .zip, .rar">
 
     <script>
@@ -394,6 +432,10 @@
         let paginaAtualLogs = 1;
         const itensPorPagina = 30;
         let isSyncing = false; 
+
+        // 🔹 VARIÁVEIS DA FILA DE UPLOADS
+        let uploadQueue = []; // { id, file, name, progress, status, path, isAux, targetName, isReplace, erro }
+        let isUploadingFiles = false;
 
         // ==========================================
         // SISTEMA DE RBAC
@@ -496,6 +538,7 @@
             if(e.target.id === modalId) {
                 if(modalId === 'modal-perfil' && !isModalObrigatorio) fecharModalPerfil();
                 else if (modalId === 'modal-restauracao') fecharModalRestauracao();
+                else if (modalId === 'modal-upload') minimizarUploadTracker();
             }
         }
 
@@ -670,7 +713,7 @@
                                 ${!isMe && u.globalRole !== 'admin' ? `<button class="btn btn-sm btn-secondary" onclick="toggleAdmin('${email}', true)">Dar Admin</button>` : ''}
                                 ${!isMe && u.globalRole === 'admin' ? `<button class="btn btn-sm btn-warning" onclick="toggleAdmin('${email}', false)">Tirar Admin</button>` : ''}
                                 ${!isMe && u.status === 'ativo' ? `<button class="btn btn-sm btn-danger" onclick="toggleStatus('${email}', 'desativado')">Desativar</button>` : ''}
-                                ${!isMe && u.status === 'desativado' ? `<button class="btn btn-sm btn-success" onclick="toggleStatus('${email}', 'ativo')" style="background:#1ea446; color:white;">Reativar</button>` : ''}
+                                ${!isMe && u.status === 'desativado' ? `<button class="btn btn-sm btn-success" onclick="toggleStatus('${email}', 'ativo')">Reativar</button>` : ''}
                                 ${!isMe ? `<button class="btn btn-sm btn-secondary" onclick="apagarUser('${email}')" title="Apagar Registro"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>` : ''}
                             </div>
                             <span class="material-symbols-outlined" id="icon-${email}" style="color:var(--text-muted);">expand_more</span>
@@ -693,8 +736,9 @@
         window.apagarUser = function(email) { if(confirm("Apagar permanentemente este usuário da plataforma?")) enviarComando({ acao: 'adminExcluirUsuario', targetEmail: email }, "Excluindo..."); }
         function enviarUpdateUserAdmin(email) { enviarComando({ acao: 'adminSalvarUsuario', targetEmail: email, userData: appData.users[email] }, "Atualizando..."); }
 
+
         // ==========================================
-        // SISTEMA BASE E NOVA API DE UPLOAD (CORS CORRIGIDO)
+        // SISTEMA BASE (METADADOS)
         // ==========================================
         function getFileBadge(filename) {
             let ext = filename.split('.').pop().toLowerCase();
@@ -718,7 +762,6 @@
             isSyncing = true;
             let btn = document.getElementById('btn-sync');
             if(btn) btn.classList.add('syncing');
-            document.getElementById('sync-text').innerText = "Sincronizando...";
             if(forcarAviso) setCarregando(true, "Sincronizando...");
             
             fetch(URL_DO_APPS_SCRIPT + "?nocache=" + Date.now()).then(res => res.json()).then(data => {
@@ -740,12 +783,76 @@
             }).catch(err => { alert("Erro de comunicação."); setCarregando(false); });
         }
 
-        // 🔹 NOVO: UPLOAD DIRETO PARA A API DO DRIVE COM PROGRESSO (%) 🔹
-        function fazerUploadDireto(file, path, targetName = null, isAux = false, isReplace = false) {
-            setCarregando(true, "Conectando ao Drive...");
-            
-            // Adicionando a "Origin" para avisar o Google Drive quem somos
-            let payloadUrl = { acao: 'getUploadUrl', path: path, nome: file.name, mimeType: file.type, isAux: isAux, targetName: targetName, origin: window.location.origin };
+
+        // ==========================================
+        // 🔹 SISTEMA DE FILA DE UPLOADS (BACKGROUND) 🔹
+        // ==========================================
+        function abrirModalUpload() {
+            // Remove concluidos antes de abrir
+            uploadQueue = uploadQueue.filter(u => u.status !== 'done');
+            renderizarUIUploads();
+            document.getElementById('modal-upload').classList.add('active');
+        }
+
+        function fecharModalUpload() {
+            document.getElementById('modal-upload').classList.remove('active');
+        }
+
+        function minimizarUploadTracker() {
+            fecharModalUpload();
+            if(uploadQueue.length > 0) document.getElementById('upload-tracker').style.display = 'flex';
+        }
+
+        function toggleTrackerBody() {
+            let body = document.getElementById('tracker-list');
+            let icon = document.getElementById('tracker-icon');
+            if(body.style.display === 'none') { body.style.display = 'block'; icon.innerText = 'expand_more'; } 
+            else { body.style.display = 'none'; icon.innerText = 'expand_less'; }
+        }
+
+        document.getElementById('multi-file-input').addEventListener('change', function(e) {
+            let files = e.target.files;
+            if(!files || files.length === 0) return;
+            for(let i=0; i<files.length; i++) adicionarFilaUpload(files[i], getPathString(), null, false, false, false);
+            this.value = '';
+        });
+
+        // isAux e isReplace jogam direto pro tracker e começam (autoStart = true)
+        function adicionarFilaUpload(file, path, targetName, isAux, isReplace, autoStart) {
+            let obj = {
+                id: Date.now() + Math.random(),
+                file: file, name: file.name, path: path,
+                targetName: targetName, isAux: isAux, isReplace: isReplace,
+                progress: 0, status: 'pending', erro: ''
+            };
+            uploadQueue.push(obj);
+            renderizarUIUploads();
+            if(autoStart) { iniciarUploadsFila(); minimizarUploadTracker(); }
+        }
+
+        function iniciarUploadsFila() {
+            if(isUploadingFiles) return;
+            let temPendente = uploadQueue.some(u => u.status === 'pending');
+            if(temPendente) { isUploadingFiles = true; processarProximoFila(); }
+        }
+
+        function processarProximoFila() {
+            let next = uploadQueue.find(u => u.status === 'pending');
+            if(!next) {
+                isUploadingFiles = false;
+                sincronizarDrive(false); // Atualiza os diretorios silenciosamente
+                renderizarUIUploads();
+                // Oculta tracker depois de 5 segundos se todos concluídos
+                if(uploadQueue.every(u => u.status === 'done')) {
+                    setTimeout(() => { document.getElementById('upload-tracker').style.display = 'none'; }, 5000);
+                }
+                return;
+            }
+
+            next.status = 'uploading';
+            renderizarUIUploads();
+
+            let payloadUrl = { acao: 'getUploadUrl', path: next.path, nome: next.name, mimeType: next.file.type, isAux: next.isAux, targetName: next.targetName, origin: window.location.origin };
             if (currentUser) { payloadUrl.userNome = currentUser.nome; payloadUrl.userEmail = currentUser.email; }
 
             fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payloadUrl) })
@@ -755,40 +862,79 @@
                 let xhr = new XMLHttpRequest();
                 xhr.open('PUT', resUrl.url, true);
                 
-                // Barra de Progresso Real
                 xhr.upload.onprogress = function(e) {
                     if (e.lengthComputable) {
-                        let percent = Math.round((e.loaded / e.total) * 100);
-                        document.getElementById('loading-text').innerText = `Enviando Arquivo: ${percent}%`;
+                        next.progress = Math.round((e.loaded / e.total) * 100);
+                        if(next.progress === 100) next.status = 'saving';
+                        renderizarUIUploads();
                     }
                 };
                 
                 xhr.onload = function() {
                     if (xhr.status >= 200 && xhr.status < 300) {
-                        document.getElementById('loading-text').innerText = "Salvando versão...";
                         let fileMeta = JSON.parse(xhr.responseText);
-                        
-                        let finalPayload = { acao: 'finalizeUpload', fileId: fileMeta.id, nome: file.name, path: path, isAux: isAux, isReplace: isReplace, targetName: targetName };
+                        let finalPayload = { acao: 'finalizeUpload', fileId: fileMeta.id, nome: next.name, path: next.path, isAux: next.isAux, isReplace: next.isReplace, targetName: next.targetName };
                         if (currentUser) { finalPayload.userNome = currentUser.nome; finalPayload.userEmail = currentUser.email; }
 
                         fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(finalPayload) })
                         .then(r => r.json()).then(resFin => {
-                            if(resFin.sucesso) sincronizarDrive();
-                            else { alert("Erro na finalização: " + resFin.erro); setCarregando(false); }
-                        }).catch(e => { alert("Erro de rede na finalização."); setCarregando(false); });
-                    } else { alert("Erro na API do Google Drive."); setCarregando(false); }
+                            if(resFin.sucesso) next.status = 'done';
+                            else { next.status = 'error'; next.erro = resFin.erro; }
+                            renderizarUIUploads(); processarProximoFila();
+                        }).catch(e => { next.status = 'error'; next.erro = "Erro finalização"; renderizarUIUploads(); processarProximoFila(); });
+                    } else { next.status = 'error'; next.erro = "Erro API Drive"; renderizarUIUploads(); processarProximoFila(); }
                 };
                 
-                // Fallback Inteligente: Se o navegador tentar bloquear mesmo dando 100%, nós ignoramos e forçamos a atualização
                 xhr.onerror = function() { 
-                    document.getElementById('loading-text').innerText = "Sincronizando com o Drive...";
-                    setTimeout(() => { sincronizarDrive(true); }, 2000); 
+                    next.status = 'done'; // Fallback CORS
+                    renderizarUIUploads(); processarProximoFila();
                 };
                 
-                xhr.send(file); 
-            }).catch(e => { alert("Erro: " + e.message); setCarregando(false); });
+                xhr.send(next.file); 
+            }).catch(e => { next.status = 'error'; next.erro = e.message; renderizarUIUploads(); processarProximoFila(); });
         }
 
+        function renderizarUIUploads() {
+            let htmlList = '';
+            let pendentes = 0;
+
+            if(uploadQueue.length === 0) {
+                htmlList = `<div class="empty-state" style="margin-top:0; padding:20px;">Nenhum arquivo na fila.</div>`;
+            } else {
+                uploadQueue.forEach(u => {
+                    if(u.status === 'pending' || u.status === 'uploading' || u.status === 'saving') pendentes++;
+                    
+                    let statusText = 'Aguardando...';
+                    let icon = 'schedule';
+                    if(u.status === 'uploading') { statusText = `${u.progress}% Enviando...`; icon = 'cloud_upload'; }
+                    else if(u.status === 'saving') { statusText = 'Finalizando Drive...'; icon = 'hourglass_empty'; }
+                    else if(u.status === 'done') { statusText = 'Concluído'; icon = 'check_circle'; }
+                    else if(u.status === 'error') { statusText = `Erro: ${u.erro}`; icon = 'error'; }
+
+                    htmlList += `
+                    <div class="upload-item">
+                        <div class="upload-item-header status-${u.status}">
+                            <div class="upload-item-name" title="${u.name}">${u.name}</div>
+                            <div style="display:flex; align-items:center; gap:4px;">
+                                <span class="material-symbols-outlined" style="font-size:16px;">${icon}</span>
+                                <span style="font-size:12px;">${statusText}</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${u.progress}%"></div></div>
+                    </div>`;
+                });
+            }
+
+            document.getElementById('upload-modal-list').innerHTML = htmlList;
+            document.getElementById('tracker-list').innerHTML = htmlList;
+            
+            document.getElementById('tracker-title').innerText = pendentes > 0 ? `${pendentes} uploads em andamento` : 'Uploads concluídos';
+            document.getElementById('btn-start-uploads').disabled = (pendentes === 0 || isUploadingFiles);
+        }
+
+        // ==========================================
+        // NAVEGAÇÃO E RENDERIZAÇÃO DOM
+        // ==========================================
         function renderizarTudo() {
             renderizarHistorico();
             renderizarVersoes();
@@ -987,13 +1133,15 @@
                 });
             }
             else if (currentLevel === 3) {
-                if(canUpload) actionsHtml = `<button class="btn btn-success" onclick="setupUploadEClick()"><span class="material-symbols-outlined">upload</span> Upload de Arquivo</button>`;
+                if(canUpload) actionsHtml = `<button class="btn btn-success" onclick="abrirModalUpload()"><span class="material-symbols-outlined">upload</span> Upload de Arquivos</button>`;
                 toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
 
                 let pathKey = getPathString();
                 let lista = appData.arquivos.filter(f => f.path === pathKey);
                 if(lista.length === 0) container.innerHTML = `<div class="empty-state">Pasta vazia.</div>`;
                 
+                let svgDrive = `<svg width="14" height="14" viewBox="0 0 87.3 78"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066da"/><path d="M43.65 25L29.9 1.2C28.5 2 27.35 3.1 26.55 4.5l-25.35 43.9c-.8 1.4-1.2 2.95-1.2 4.5h27.5L43.65 25z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 23.75-41.15c.8-1.4 1.2-2.95 1.2-4.5H55.9l5.85 10.15 11.8 20.45-13.75 23.8h13.75z" fill="#ea4335"/><path d="M43.65 25L57.4 1.2C56 0.4 54.4 0 52.8 0H34.5c-1.6 0-3.2.4-4.6 1.2L43.65 25z" fill="#00832d"/><path d="M55.9 25H27.5l-13.75 23.8 13.75 23.8h54.9L68.65 48.8 55.9 25z" fill="#2684fc"/><path d="M73.55 76.8L59.8 53 46.05 76.8h27.5z" fill="#ffba00"/></svg>`;
+
                 lista.forEach((f, idx) => {
                     let mainBadge = getFileBadge(f.nome);
                     let auxiliaresHTML = "";
@@ -1002,7 +1150,15 @@
                         f.auxiliares.forEach(aux => {
                             let auxBadge = getFileBadge(aux.nome);
                             let dragAux = canUpload ? `draggable="true" ondragstart="dragStartAux(event, '${aux.id}', '${f.nome}')"` : '';
-                            auxiliaresHTML += `<div class="aux-item" ${dragAux}><span class="aux-name">${auxBadge} <span title="${aux.nome}">${aux.nome}</span></span><a href="${aux.url}" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm"><span class="material-symbols-outlined" style="font-size:16px;">download</span></button></a></div>`;
+                            
+                            // 🔹 BOTÃO DO DRIVE PARA O ANEXO 🔹
+                            let btnAcoesAux = `
+                            <div style="display:flex; gap:4px;">
+                                <a href="${aux.url}" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px;" title="Baixar"><span class="material-symbols-outlined" style="font-size:16px;">download</span></button></a>
+                                <a href="https://drive.google.com/file/d/${aux.id}/view" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px; color: var(--primary);" title="Ver no Drive">${svgDrive}</button></a>
+                            </div>`;
+
+                            auxiliaresHTML += `<div class="aux-item" ${dragAux}><span class="aux-name">${auxBadge} <span title="${aux.nome}">${aux.nome}</span></span>${btnAcoesAux}</div>`;
                         });
                         auxiliaresHTML += `</div>`;
                     }
@@ -1023,7 +1179,6 @@
                             <div class="file-name" title="${f.nome}">${f.nome}</div>
                             <div class="file-date">${f.data}</div>
                             
-                            <!-- 🔹 BOTÕES DE AÇÃO 🔹 -->
                             <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
                                 <a href="${f.downloadUrl}" target="_blank" style="width:100%; text-decoration:none;">
                                     <button class="btn btn-primary" style="width:100%;"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Baixar</button>
@@ -1053,16 +1208,6 @@
             if(n) enviarComando({ acao: 'criarDiretorio', path: getPathString(), nomePasta: n }, "Criando...");
         }
 
-        function setupUploadEClick() {
-            let inp = document.getElementById('file-input');
-            inp.onchange = e => {
-                let file = e.target.files[0];
-                if(file) fazerUploadDireto(file, getPathString(), null, false, false);
-                inp.value = '';
-            };
-            inp.click();
-        }
-
         let arquivoParaSubstituir = "";
         function iniciarSubstituicao(e, targetName) {
             e.stopPropagation(); 
@@ -1072,7 +1217,7 @@
 
         document.getElementById('file-replace-input').addEventListener('change', function(e) {
             let file = e.target.files[0];
-            if(file) fazerUploadDireto(file, getPathString(), arquivoParaSubstituir, false, true);
+            if(file) adicionarFilaUpload(file, getPathString(), arquivoParaSubstituir, false, true, true);
             this.value = '';
         });
 
@@ -1109,7 +1254,8 @@
                 }
                 if (levelDrop === 3) {
                     let file = e.dataTransfer.files[0];
-                    fazerUploadDireto(file, getPathString(), targetName, true, false);
+                    // Se dropar arquivo em cima de um Card, vira anexo em Background (autoStart = true)
+                    adicionarFilaUpload(file, getPathString(), targetName, true, false, true);
                     return;
                 }
             }
