@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LootShare</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+    <style>
+        :root { --bg-color: #f3f4f6; --container-bg: #ffffff; --text-color: #1f1f1f; --text-muted: #444746; --navbar-bg: #f8f9fa; --navbar-text: #1f1f1f; --border-color: #c7c7c7; --surface-color: #f8f9fa; --primary: #0b57d0; --on-primary: #ffffff; --secondary-container: #e8def8; --on-secondary-container: #1d192b; --error: #b3261e; --on-error: #ffffff; --tertiary: #00639b; }
+        body.dark-mode { --bg-color: #0e0e0e; --container-bg: #1e1f20; --text-color: #e3e3e3; --text-muted: #c4c7c5; --navbar-bg: #1e1f20; --navbar-text: #e3e3e3; --border-color: #444746; --surface-color: #282a2c; --primary: #a8c7fa; --on-primary: #062e6f; --secondary-container: #4a4458; --on-secondary-container: #e8def8; --error: #f2b8b5; --on-error: #601410; --tertiary: #9ccaf9; }
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
+        
+        .navbar { background-color: var(--navbar-bg); color: var(--navbar-text); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 64px; border-bottom: 1px solid var(--border-color); }
+        .navbar-brand { font-size: 22px; font-weight: 500; display: flex; align-items: center; gap: 8px; color: var(--primary); }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-links { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; gap: 8px; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 16px; border-radius: 24px; transition: 0.2s; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .nav-links a:hover { background-color: var(--surface-color); color: var(--text-color); }
+        .nav-links a.active { background-color: var(--secondary-container); color: var(--on-secondary-container); }
+        
+        .btn-sync-green { background-color: #1ea446 !important; color: #ffffff !important; border-radius: 24px; padding: 8px 16px; transition: 0.2s; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 14px; }
+        .btn-sync-green:hover:not(:disabled) { filter: brightness(0.9); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .btn-sync-green.syncing .material-symbols-outlined { animation: rotation 1s linear infinite; }
+
+        /* 🔹 AVATAR E NOVAS BADGES ESTILO "PILL" 🔹 */
+        .user-avatar-wrapper { position: relative; margin-left: 12px; cursor: pointer; display: inline-block; }
+        .user-avatar-img-wrapper { width: 36px; height: 36px; border-radius: 50%; background-color: var(--primary); color: white; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 2px solid transparent; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .user-avatar-wrapper:hover .user-avatar-img-wrapper { border-color: var(--primary); filter: brightness(1.1); }
+        
+        .role-badge { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 12px; color: #fff; border: 2px solid var(--navbar-bg); z-index: 10; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.15); white-space: nowrap; line-height: 1.2; font-family: 'Roboto', sans-serif; }
+        
+        .role-badge-inline { display: inline-block; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 12px; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.2; }
+        
+        .role-admin { background-color: #0b57d0; } /* Azul */
+        .role-gerente { background-color: #d93025; } /* Vermelho */
+        .role-editor { background-color: #f9ab00; } /* Amarelo */
+        .role-leitor { background-color: #1ea446; } /* Verde */
+        .role-desativado { background-color: #80868b; } /* Cinza */
+
+        .container { max-width: 1300px; margin: 32px auto; padding: 32px; background: var(--container-bg); border-radius: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); min-height: 500px; position: relative; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-weight: 400; margin-top: 0; color: var(--text-color); font-size: 24px; margin-bottom: 8px; }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--text-muted); font-weight: 500; }
+        
+        .btn { padding: 10px 24px; border: none; border-radius: 100px; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Roboto', sans-serif; }
+        .btn:hover:not(:disabled) { filter: brightness(0.92); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background-color: var(--primary); color: var(--on-primary); }
+        .btn-secondary { background-color: var(--surface-color); color: var(--text-color); border: 1px solid var(--border-color); }
+        .btn-danger { background-color: var(--error); color: var(--on-error); }
+        .btn-warning { background-color: var(--tertiary); color: var(--on-primary); }
+        .btn-drive { background-color: #0b3c78; color: #ffffff; border: none; margin-top: 4px; }
+        .btn-drive:hover { background-color: #062752; filter: brightness(1.1); box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .btn-sm { padding: 6px 16px; font-size: 13px; } 
+
+        .icon-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 8px; border-radius: 50%; display: flex; transition: 0.2s; }
+        .icon-btn:hover { background-color: var(--surface-color); color: var(--text-color); }
+        
+        .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-btn { background-color: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; }
+        .filter-btn.active { background-color: var(--secondary-container) !important; color: var(--on-secondary-container) !important; border-color: transparent; font-weight: 500;}
+        .pagination-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+
+        .breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 500; margin-bottom: 24px; color: var(--text-muted); flex-wrap: wrap; }
+        .breadcrumbs span { cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; display:flex; align-items:center; gap:4px; }
+        .breadcrumbs span:hover { background-color: var(--surface-color); color: var(--primary); }
+        .breadcrumbs .active-crumb { color: var(--text-color); font-weight: 700; cursor: default; background: none !important; pointer-events: none;}
+        
+        .toolbar { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 24px; align-items: center; flex-wrap: wrap;}
+        
+        .explorer-layout { display: flex; gap: 24px; align-items: flex-start; }
+        .sidebar { width: 280px; flex-shrink: 0; border-right: 1px solid var(--border-color); padding-right: 16px; min-height: 400px; max-height: 600px; overflow-y: auto; overflow-x: hidden; }
+        .main-explorer { flex-grow: 1; min-width: 0; }
+
+        ul.tree-root, ul.tree-branch { list-style: none; padding: 0; margin: 0; }
+        ul.tree-branch { padding-left: 18px; margin-left: 10px; border-left: 1px solid var(--border-color); }
+        ul.tree-root > li.tree-item { font-weight: 500; font-size: 15px; margin-bottom: 4px; }
+        
+        .tree-item { position: relative; display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; color: var(--text-color); font-size: 14px; transition: 0.2s; margin-bottom: 2px; }
+        .tree-item:hover { background-color: var(--surface-color); }
+        .tree-item.active { background-color: rgba(11, 87, 208, 0.08); }
+        
+        .tree-text { cursor: pointer; flex-grow: 1; padding: 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; user-select: none; }
+        .tree-text:hover { color: var(--primary); }
+        .tree-item.active .tree-text { color: var(--primary); font-weight: 500; }
+        
+        .toggle-icon { font-size: 18px; color: var(--text-muted); cursor: pointer; user-select: none; padding: 2px; border-radius: 4px; transition: 0.1s; }
+        .toggle-icon:hover { background-color: var(--border-color); color: var(--text-color); }
+        
+        .folder-icon { font-size: 20px; color: var(--text-muted); cursor: pointer; user-select: none; transition: 0.1s; }
+        .folder-icon:hover { color: var(--primary); }
+        .tree-item.active .folder-icon { color: var(--primary); }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; align-items: start; min-height: 300px; padding: 8px 0; transition: 0.3s; }
+        body.dragging-aux .grid-container { border: 2px dashed var(--tertiary); background-color: var(--secondary-container); border-radius: 12px; padding: 16px;}
+        
+        .rename-btn { background: transparent; border: none; border-radius: 50%; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); z-index: 10; transition: 0.2s; opacity: 0; }
+        .rename-btn:hover { color: var(--primary); background-color: var(--border-color); }
+        .card-vertical:hover .rename-btn, .folder-card:hover .rename-btn { opacity: 1; }
+
+        .card-title-wrapper { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 12px 8px; z-index: 2; position: relative; background-color: var(--container-bg); }
+        .card-title { font-weight: 500; font-size: 15px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; margin: 0; padding: 0;}
+
+        .card-vertical { background-color: var(--container-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; height: 100%; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05); }
+        .card-vertical:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.12); border-color: var(--primary); }
+        .card-vertical.drag-over { border-color: var(--primary); border-width: 2px; }
+        
+        .card-thumb { width: 100%; aspect-ratio: 3/4; background-color: var(--surface-color); object-fit: cover; display: flex; justify-content: center; align-items: center; color: var(--primary); pointer-events: none; position: relative; z-index: 1; border-bottom: 1px solid var(--border-color); }
+        .card-thumb .material-symbols-outlined { font-size: 64px; opacity: 0.5; }
+        
+        .folder-card { position: relative; background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px 16px; text-align: center; cursor: pointer; transition: 0.2s; color: var(--text-color); display:flex; flex-direction:column; align-items:center; box-shadow: 0 4px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04); }
+        .folder-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); border-color: var(--primary); }
+        
+        .file-card { background-color: var(--container-bg); border: 1px solid var(--border-color); position: relative; border-radius: 16px; padding: 16px; text-align: center; transition: 0.2s; cursor: grab; box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05); }
+        .file-card:active { cursor: grabbing; }
+        .file-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.12); border-color: var(--primary); }
+        .file-card.drag-over { border-color: var(--primary) !important; background-color: var(--surface-color) !important; border-width: 2px; }
+        .drag-hint { font-size: 12px; color: var(--primary); margin-top: 8px; opacity: 0; transition: opacity 0.3s; font-weight: 500; }
+        .card-vertical.drag-over .drag-hint, .file-card.drag-over .drag-hint { opacity: 1; }
+        
+        .file-thumb-wrapper { width: 100%; height: 160px; border-radius: 8px; margin-bottom: 12px; background-color: var(--surface-color); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); }
+        .file-thumb-wrapper img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; transition: opacity 0.3s; opacity: 0; z-index: 1; }
+        .file-thumb-fallback { font-size: 48px; color: var(--text-muted); opacity: 0.3; }
+
+        .replace-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; opacity: 0; transition: 0.2s; z-index: 10; backdrop-filter: blur(4px); }
+        .replace-btn:hover { background-color: var(--primary); border-color: var(--primary); }
+        .file-thumb-wrapper:hover .replace-btn { opacity: 1; }
+
+        .file-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; word-break: break-all; }
+        
+        .aux-container { margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px; text-align: left; }
+        .aux-title { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+        .aux-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface-color); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; border: 1px solid transparent; cursor: grab; transition: 0.2s; }
+        .aux-item:hover { border-color: var(--border-color); background: var(--bg-color); }
+        .aux-item:active { cursor: grabbing; }
+        .aux-name { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+        
+        .star-badge { position: absolute; top: 20px; right: -8px; background: var(--primary); color: var(--on-primary); padding: 4px 12px; border-radius: 12px 0 0 12px; font-size: 11px; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 2; pointer-events: none; display: flex; align-items: center; gap: 4px; }
+        
+        .soft-badge { display: inline-flex; align-items: center; justify-content: center; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; height: 18px; line-height: 1; font-family: Arial, sans-serif; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .badge-psd { background-color: #001e36; color: #31a8ff; border: 1px solid #31a8ff; }
+        .badge-ai { background-color: #330000; color: #ff9a00; border: 1px solid #ff9a00; }
+        .badge-indd { background-color: #49021f; color: #ff3366; border: 1px solid #ff3366; }
+        .badge-blend { background-color: #ea7600; color: #ffffff; border: 1px solid #c36200; }
+        .badge-pdf { background-color: #f40f02; color: #ffffff; border: 1px solid #c90000; }
+
+        /* 🔹 MODAIS CORRIGIDOS COM CLIQUE FORA 🔹 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(2px); cursor: pointer;}
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 4000; backdrop-filter: blur(2px); }
+        .modal-overlay.active, #loading-overlay.active { display: flex; }
+        .modal-content { background: var(--container-bg); color: var(--text-color); padding: 32px; border-radius: 28px; width: 400px; box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14); max-height: 90vh; overflow-y: auto; cursor: default; position: relative;}
+        .modal-content select { width: 100%; padding: 12px; margin: 16px 0 32px 0; background: var(--surface-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px;}
+        
+        .close-btn { position: absolute; top: 16px; right: 16px; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 4px; border-radius: 50%; transition: 0.2s; display: flex;}
+        .close-btn:hover { background: var(--surface-color); color: var(--text-color); }
+
+        .input-group { margin-bottom: 16px; text-align: left; }
+        .input-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; background: var(--surface-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; font-family: 'Roboto'; box-sizing: border-box; font-size: 15px;}
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); outline: none; }
+        .input-group input:disabled, .input-group select:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .profile-pic-picker { width: 100px; height: 100px; border-radius: 50%; background-color: var(--surface-color); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px dashed var(--border-color); overflow: hidden; position: relative; }
+        .profile-pic-picker:hover { border-color: var(--primary); }
+        .profile-pic-picker img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1; }
+        .profile-pic-picker span { z-index: 0; color: var(--text-muted); font-size: 32px; }
+
+        /* 🔹 TELA DE LOGIN 🔹 */
+        #login-screen { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 3000; 
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('https://drive.google.com/thumbnail?id=1OoAJJuiqNdp8s_HQ8XJHOIfJaCLvtVSg&sz=w1920') no-repeat center center / cover; 
+        }
+        .login-card { background: var(--container-bg); color: var(--text-color); padding: 40px; border-radius: 28px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; z-index: 3001; border: 1px solid rgba(255,255,255,0.05); }
+        .login-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .login-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        
+        #app-wrapper { display: none; }
+        
+        /* 🔹 ADMIN DASHBOARD (LISTA COLAPSÁVEL CINZA) 🔹 */
+        .admin-user-card { border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 16px; background: var(--container-bg); transition: box-shadow 0.2s;}
+        .admin-user-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .admin-user-card .header { display: flex; align-items: center; gap: 16px; padding: 16px; cursor: pointer; border-radius: 12px; background: var(--surface-color); transition: background 0.2s; user-select: none;}
+        .admin-user-card .header:hover { filter: brightness(0.96); }
+        .admin-user-card .body-panel { padding: 16px; border-top: 1px solid var(--border-color); display: none; }
+        
+        .admin-slider-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+        .admin-slider-container:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .admin-slider-container select { padding: 6px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--container-bg); color: var(--text-color); font-size: 13px; width: auto;}
+
+        .spinner { width: 48px; height: 48px; border: 5px solid var(--surface-color); border-bottom-color: var(--primary); border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; margin-bottom: 16px; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-box { background: var(--container-bg); padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .empty-state { text-align: center; color: var(--text-muted); margin-top: 40px; padding: 40px; border: 1px dashed var(--border-color); border-radius: 16px; grid-column: 1 / -1; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <img src="https://drive.google.com/thumbnail?id=1Gwk1YFSxVojbKLMhVvpent3KKtyrxFeN" alt="Logo LootShare" style="height: 56px; width: auto; margin-bottom: 12px; display: inline-block;">
+            <div class="login-title">LootShare</div>
+            <div class="login-subtitle">Acesso restrito ao projeto.</div>
+            <div class="input-group">
+                <input type="email" id="login-email" placeholder="Seu e-mail profissional" autocomplete="email">
+            </div>
+            <div class="input-group">
+                <input type="password" id="login-senha" placeholder="Senha do projeto">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 16px;" onclick="fazerLogin()">Entrar</button>
+        </div>
+    </div>
+
+    <!-- 🔹 MODAL PERFIL (FECHA CLICANDO FORA) 🔹 -->
+    <div id="modal-perfil" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-perfil')">
+        <div class="modal-content" style="text-align: center; position:relative;">
+            
+            <button class="close-btn" id="btn-fechar-modal-perfil" onclick="fecharModalPerfil()"><span class="material-symbols-outlined">close</span></button>
+            <button id="btn-admin-panel" class="btn btn-warning" onclick="abrirAdminPanel()" style="display:none; position: absolute; top: 16px; left: 16px; padding: 8px;" title="Gerenciar Usuários">
+                <span class="material-symbols-outlined" style="font-size:20px;">manage_accounts</span>
+            </button>
+
+            <h2 id="modal-perfil-titulo" style="margin-bottom:24px; margin-top: 10px;">Perfil</h2>
+            
+            <div style="position:relative; width: 100px; margin: 0 auto 24px auto;" id="div-profile-pic-container">
+                <div class="profile-pic-picker" id="div-profile-pic" onclick="document.getElementById('profile-pic-input').click()">
+                    <span class="material-symbols-outlined">person</span>
+                    <img id="profile-pic-preview" src="" style="display: none;">
+                </div>
+                <div id="modal-role-badge" class="role-badge role-leitor" style="display:none; border-color: var(--container-bg);"></div>
+            </div>
+
+            <input type="file" id="profile-pic-input" style="display:none" accept="image/*">
+            
+            <div class="input-group">
+                <label>E-mail</label>
+                <input type="text" id="perfil-email" disabled>
+            </div>
+            <div class="input-group">
+                <label>Nome</label>
+                <input type="text" id="perfil-nome" placeholder="Ex: João Silva">
+            </div>
+            <div class="input-group">
+                <label>Cargo</label>
+                <input type="text" id="perfil-cargo" placeholder="Ex: Diretor de Arte">
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 28px; justify-content: center; flex-wrap: wrap;" id="botoes-edicao-perfil">
+                <button class="btn btn-secondary" onclick="fecharModalPerfil()" id="btn-cancelar-perfil">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarPerfil()">Salvar Perfil</button>
+            </div>
+            
+            <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 16px;" id="div-logoff">
+                <button class="btn btn-danger btn-sm" onclick="fazerLogoff()" style="width: 100%; justify-content: center;">
+                    <span class="material-symbols-outlined" style="font-size:16px;">logout</span> Sair da Conta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-overlay">
+        <div class="loading-box">
+            <span class="spinner"></span>
+            <h3 id="loading-text" style="margin:0; font-weight: 500;">Processando...</h3>
+        </div>
+    </div>
+
+    <div id="app-wrapper">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <img src="https://drive.google.com/thumbnail?id=1YIu18heXPtXoSH1dxHCH2Gm1zSot5FUS" alt="Logo" style="height: 28px; width: auto;"> 
+                LootShare
+            </div>
+            <div class="nav-right">
+                <ul class="nav-links">
+                    <li><a class="active" onclick="switchTab('home')"><span class="material-symbols-outlined">home</span> Home</a></li>
+                    <li><a onclick="switchTab('explorer')"><span class="material-symbols-outlined">account_tree</span> Projetos</a></li>
+                    <li><a onclick="switchTab('versoes')"><span class="material-symbols-outlined">history</span> Versões</a></li>
+                    <li>
+                        <button id="btn-sync" onclick="sincronizarDrive(true)" class="btn-sync-green" title="Sincronizar">
+                            <span class="material-symbols-outlined" id="sync-icon">sync</span> 
+                            <span id="sync-text">Sincronizar</span>
+                            <span id="sync-time" style="font-size: 12px; margin-left: 4px; opacity: 0.85;"></span>
+                        </button>
+                    </li>
+                </ul>
+                <button class="icon-btn" onclick="toggleTheme()"><span class="material-symbols-outlined" id="theme-icon">dark_mode</span></button>
+                
+                <div class="user-avatar-wrapper" onclick="abrirModalPerfilAtual()" title="Meu Perfil">
+                    <div class="user-avatar-img-wrapper">
+                        <img id="nav-user-img" src="" style="display: none; width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">
+                        <span id="nav-user-icon" class="material-symbols-outlined" style="font-size:20px;">person</span>
+                    </div>
+                    <div id="nav-role-badge" class="role-badge role-leitor" style="display:none; border-color: var(--navbar-bg);"></div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div id="home" class="section active">
+                <h2>Diário de Bordo</h2>
+                <div class="subtitle">Acompanhe o histórico de atividades da plataforma.</div>
+                <div class="filter-bar">
+                    <button class="btn btn-sm filter-btn active" onclick="filtrarLog('todos', this)">Todos</button>
+                    <button class="btn btn-sm filter-btn" onclick="filtrarLog('uploads', this)">Uploads</button>
+                    <button class="btn btn-sm filter-btn" onclick="filtrarLog('movimentacoes', this)">Movimentações</button>
+                    <button class="btn btn-sm filter-btn" onclick="filtrarLog('exclusoes', this)">Exclusões</button>
+                    <button class="btn btn-sm filter-btn" onclick="filtrarLog('backend', this)">Back-end</button>
+                    <button class="btn btn-sm filter-btn" onclick="filtrarLog('agrupamentos', this)">Agrupamentos</button>
+                </div>
+                <div class="pagination-bar">
+                    <button class="btn btn-sm btn-secondary" onclick="mudarPagina(-1)" id="btn-prev"><span class="material-symbols-outlined" style="font-size:18px;">chevron_left</span> Anterior</button>
+                    <span id="page-info" style="font-size: 14px; font-weight: 500; color: var(--text-color);">Página 1 de 1</span>
+                    <button class="btn btn-sm btn-secondary" onclick="mudarPagina(1)" id="btn-next">Próxima <span class="material-symbols-outlined" style="font-size:18px;">chevron_right</span></button>
+                </div>
+                <table>
+                    <thead><tr><th style="width: 55%">Ação Registrada</th><th style="width: 25%">Usuário</th><th>Data e Hora</th></tr></thead>
+                    <tbody id="historico-table"></tbody>
+                </table>
+            </div>
+
+            <div id="explorer" class="section" ondragover="dropAllowGrid(event)" ondrop="dropGrid(event)">
+                <div class="explorer-layout">
+                    <div class="sidebar" id="sidebar-tree"></div>
+                    <div class="main-explorer">
+                        <div class="breadcrumbs" id="breadcrumbs-container">
+                            <span class="active-crumb"><span class="material-symbols-outlined">folder_open</span> Projetos</span>
+                        </div>
+                        <div class="toolbar" id="explorer-toolbar">
+                            <!-- Injetado via JS: Indicador de Permissão + Botões -->
+                        </div>
+                        <div class="grid-container" id="explorer-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="versoes" class="section">
+                <h2>Controle de Versões</h2>
+                <div class="subtitle">As versões antigas ficam ocultas no Drive. Restaurá-las não afeta seus anexos.</div>
+                <table>
+                    <thead>
+                        <tr><th>Arquivo Ativo</th><th>Caminho (Pasta)</th><th>Versão Atual</th><th>Modificação</th><th>Ação</th></tr>
+                    </thead>
+                    <tbody id="versoes-table"></tbody>
+                </table>
+            </div>
+            
+            <div id="admin-dashboard" class="section">
+                <h2>Gerenciamento de Usuários</h2>
+                <div class="subtitle">Controle quem pode acessar, editar ou gerenciar projetos na plataforma.</div>
+                <button class="btn btn-secondary" style="margin-bottom: 24px;" onclick="switchTab('home')"><span class="material-symbols-outlined">arrow_back</span> Voltar</button>
+                <div id="admin-users-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 MODAL RESTAURAR (FECHA CLICANDO FORA) 🔹 -->
+    <div id="modal-restauracao" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-restauracao')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="fecharModalRestauracao()"><span class="material-symbols-outlined">close</span></button>
+            <h2 id="modal-titulo" style="margin-bottom:8px; margin-top:10px;">Restaurar Arquivo</h2>
+            <p style="color: var(--text-muted); font-size:14px;">A versão escolhida assumirá a linha de frente.</p>
+            <select id="select-versoes"></select>
+            <div class="modal-actions-buttons" style="display:flex; justify-content:flex-end; gap:12px;">
+                <button class="btn btn-secondary" onclick="fecharModalRestauracao()">Cancelar</button>
+                <button class="btn btn-warning" onclick="confirmarRestauracao()"><span class="material-symbols-outlined">restore</span> Restaurar</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="file-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf">
+    <input type="file" id="file-replace-input" style="display: none;" accept="image/*, .psd, .ai, .indd, .blend, .pdf">
+
+    <script>
+        // --- ⚠️ COLE SUA NOVA URL AQUI ⚠️ ---
+        const URL_DO_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzolBjRpd1oaW1Yz8xI4PfFI0j2FL2q5KKx5iHSLKRA5pcGG-RTUhcAA3H8Rhsk1issgA/exec';
+
+        let appData = { projetos: [], subprojetos: {}, pastas: {}, arquivos: [], logs: [], order: {}, users: {} };
+        let currentUser = null; 
+        let isModalObrigatorio = false; // Controla se o usuário pode fechar o modal
+        
+        let currentLevel = 0; 
+        let currentPathArr = []; 
+        let collapsedPaths = new Set();
+        
+        let filtroLogAtual = 'todos';
+        let paginaAtualLogs = 1;
+        const itensPorPagina = 30;
+        let isSyncing = false; 
+
+        // ==========================================
+        // SISTEMA DE RBAC (FUNÇÕES DE CHECAGEM)
+        // ==========================================
+        function getPermissaoAtual() {
+            if (!currentUser) return 'leitor';
+            if (currentUser.globalRole === 'admin') return 'admin';
+            if (currentLevel === 0) return 'leitor'; 
+            let projAtual = currentPathArr[0];
+            let pRoles = currentUser.projectRoles || {};
+            return pRoles[projAtual] || 'leitor';
+        }
+
+        // ==========================================
+        // SISTEMA DE LOGIN E SESSÃO
+        // ==========================================
+        function checarSessao() {
+            try {
+                const savedEmail = localStorage.getItem('lootshare_email');
+                const savedUserStr = localStorage.getItem('lootshare_user');
+                if (savedEmail && savedUserStr) {
+                    currentUser = JSON.parse(savedUserStr);
+                    currentUser.email = savedEmail; 
+                    iniciarApp();
+                } else mostrarTelaLogin();
+            } catch (e) {
+                localStorage.removeItem('lootshare_email');
+                localStorage.removeItem('lootshare_user');
+                mostrarTelaLogin();
+            }
+        }
+
+        function mostrarTelaLogin() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app-wrapper').style.display = 'none';
+        }
+
+        function fazerLogin() {
+            let email = document.getElementById('login-email').value.trim().toLowerCase();
+            let senha = document.getElementById('login-senha').value.trim();
+
+            if (!email || !senha) return alert("Preencha e-mail e senha.");
+            setCarregando(true, "Autenticando...");
+            
+            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', body: JSON.stringify({ acao: 'login', email: email, senha: senha }) })
+            .then(res => res.json()).then(result => {
+                setCarregando(false);
+                if (!result.sucesso) return alert(result.erro);
+                localStorage.setItem('lootshare_email', email); 
+                
+                if (result.user) {
+                    currentUser = result.user;
+                    currentUser.email = email;
+                    localStorage.setItem('lootshare_user', JSON.stringify(currentUser));
+                    iniciarApp();
+                } else {
+                    currentUser = { email: email, nome: "", cargo: "", foto: "", globalRole: "user", status: "ativo", projectRoles: {} };
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('app-wrapper').style.display = 'block';
+                    abrirModalPerfilParaEdicao(true);
+                }
+            }).catch(err => { alert("Erro de conexão."); setCarregando(false); });
+        }
+
+        function fazerLogoff() {
+            if (confirm("Sair da conta?")) {
+                localStorage.removeItem('lootshare_email');
+                localStorage.removeItem('lootshare_user');
+                currentUser = null;
+                document.getElementById('login-email').value = "";
+                document.getElementById('login-senha').value = "";
+                fecharModalPerfil(true);
+                mostrarTelaLogin();
+            }
+        }
+
+        function iniciarApp() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-wrapper').style.display = 'block';
+            atualizarAvatarMenu();
+            sincronizarDrive(true);
+        }
+
+        function setBadge(elementId, role, borderCol) {
+            let b = document.getElementById(elementId);
+            if (!b) return;
+            b.className = `role-badge role-${role}`;
+            b.style.display = 'block';
+            b.innerText = role.toUpperCase();
+            if (borderCol) b.style.borderColor = borderCol;
+        }
+
+        function atualizarAvatarMenu() {
+            if (!currentUser) return;
+            let img = document.getElementById('nav-user-img');
+            let icon = document.getElementById('nav-user-icon');
+            if (currentUser.foto) { img.src = currentUser.foto; img.style.display = 'block'; icon.style.display = 'none'; } 
+            else { img.style.display = 'none'; icon.style.display = 'block'; }
+            setBadge('nav-role-badge', currentUser.globalRole === 'admin' ? 'admin' : 'leitor', 'var(--navbar-bg)');
+        }
+
+        // ==========================================
+        // FECHAR MODAIS CLICANDO FORA
+        // ==========================================
+        function fecharModalSeClicarFora(e, modalId) {
+            if(e.target.id === modalId) {
+                if(modalId === 'modal-perfil' && !isModalObrigatorio) fecharModalPerfil();
+                else if (modalId === 'modal-restauracao') fecharModalRestauracao();
+            }
+        }
+
+        // ==========================================
+        // PERFIL E ADMINISTRAÇÃO
+        // ==========================================
+        let perfilFotoBase64 = null;
+        let perfilFotoMime = null;
+
+        function abrirModalPerfilAtual() { abrirModalPerfilParaEdicao(false); }
+
+        function abrirModalPerfilParaEdicao(isObrigatorio) {
+            isModalObrigatorio = isObrigatorio;
+            document.getElementById('perfil-email').value = currentUser.email;
+            document.getElementById('perfil-nome').value = currentUser.nome || "";
+            document.getElementById('perfil-cargo').value = currentUser.cargo || "";
+            
+            document.getElementById('perfil-nome').disabled = false;
+            document.getElementById('perfil-cargo').disabled = false;
+            document.getElementById('botoes-edicao-perfil').style.display = 'flex';
+            document.getElementById('div-logoff').style.display = isObrigatorio ? 'none' : 'block';
+            document.getElementById('profile-pic-input').disabled = false;
+            document.getElementById('div-profile-pic').style.pointerEvents = 'auto';
+            document.getElementById('btn-admin-panel').style.display = (!isObrigatorio && currentUser.globalRole === 'admin') ? 'block' : 'none';
+            document.getElementById('btn-cancelar-perfil').style.display = isObrigatorio ? 'none' : 'inline-block';
+            document.getElementById('btn-fechar-modal-perfil').style.display = isObrigatorio ? 'none' : 'flex';
+            document.getElementById('modal-perfil-titulo').innerText = isObrigatorio ? 'Criar Perfil' : 'Meu Perfil';
+
+            let preview = document.getElementById('profile-pic-preview');
+            if (currentUser.foto) { preview.src = currentUser.foto; preview.style.display = 'block'; } 
+            else preview.style.display = 'none';
+            
+            setBadge('modal-role-badge', currentUser.globalRole === 'admin' ? 'admin' : 'leitor', 'var(--container-bg)');
+
+            perfilFotoBase64 = null;
+            document.getElementById('profile-pic-input').value = "";
+            document.getElementById('modal-perfil').classList.add('active');
+        }
+
+        window.verPerfilHistorico = function(email) {
+            if (!appData.users[email]) return alert("Usuário não encontrado.");
+            let u = appData.users[email];
+            isModalObrigatorio = false;
+            
+            document.getElementById('perfil-email').value = email;
+            document.getElementById('perfil-nome').value = u.nome || "";
+            document.getElementById('perfil-cargo').value = u.cargo || "";
+            
+            document.getElementById('perfil-nome').disabled = true;
+            document.getElementById('perfil-cargo').disabled = true;
+            document.getElementById('botoes-edicao-perfil').style.display = 'none';
+            document.getElementById('div-logoff').style.display = 'none';
+            document.getElementById('btn-admin-panel').style.display = 'none';
+            document.getElementById('btn-fechar-modal-perfil').style.display = 'flex';
+            document.getElementById('div-profile-pic').style.pointerEvents = 'none';
+            document.getElementById('modal-perfil-titulo').innerText = 'Perfil do Usuário';
+
+            let preview = document.getElementById('profile-pic-preview');
+            if (u.foto) { preview.src = u.foto; preview.style.display = 'block'; } 
+            else preview.style.display = 'none';
+            
+            setBadge('modal-role-badge', u.status === 'desativado' ? 'desativado' : (u.globalRole === 'admin' ? 'admin' : 'leitor'), 'var(--container-bg)');
+
+            document.getElementById('modal-perfil').classList.add('active');
+        }
+
+        function fecharModalPerfil(force = false) { 
+            if(!isModalObrigatorio || force) document.getElementById('modal-perfil').classList.remove('active'); 
+        }
+
+        document.getElementById('profile-pic-input').addEventListener('change', function(e) {
+            let file = e.target.files[0];
+            if(!file) return;
+            perfilFotoMime = file.type;
+            const reader = new FileReader();
+            reader.onload = r => { 
+                document.getElementById('profile-pic-preview').src = r.target.result;
+                document.getElementById('profile-pic-preview').style.display = 'block';
+                perfilFotoBase64 = r.target.result.split(',')[1];
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function salvarPerfil() {
+            let nome = document.getElementById('perfil-nome').value.trim();
+            let cargo = document.getElementById('perfil-cargo').value.trim();
+            if (!nome) return alert("O Nome é obrigatório.");
+
+            setCarregando(true, "Salvando perfil...");
+            let payload = { acao: 'salvarPerfil', email: currentUser.email, nome: nome, cargo: cargo, base64: perfilFotoBase64, mimeType: perfilFotoMime };
+
+            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', body: JSON.stringify(payload) })
+            .then(res => res.json()).then(result => {
+                setCarregando(false);
+                if (result.sucesso) {
+                    currentUser = result.user;
+                    currentUser.email = payload.email;
+                    localStorage.setItem('lootshare_user', JSON.stringify(currentUser));
+                    atualizarAvatarMenu();
+                    isModalObrigatorio = false;
+                    fecharModalPerfil();
+                    if(appData.projetos.length === 0) sincronizarDrive(true);
+                } else alert("Erro ao salvar perfil.");
+            }).catch(err => { alert("Erro."); setCarregando(false); });
+        }
+
+        // ==========================================
+        // ADMIN DASHBOARD
+        // ==========================================
+        window.abrirAdminPanel = function() {
+            fecharModalPerfil();
+            switchTab('admin-dashboard');
+            renderizarAdminPanel();
+        }
+
+        window.toggleAdminRoles = function(email) {
+            let panel = document.getElementById('roles-' + email);
+            let icon = document.getElementById('icon-' + email);
+            if(panel.style.display === 'none') {
+                panel.style.display = 'block';
+                icon.innerText = 'expand_less';
+            } else {
+                panel.style.display = 'none';
+                icon.innerText = 'expand_more';
+            }
+        }
+
+        function renderizarAdminPanel() {
+            const list = document.getElementById('admin-users-list');
+            list.innerHTML = '';
+            let projetosNomes = appData.projetos.map(p => p.nome);
+
+            for (let email in appData.users) {
+                let u = appData.users[email];
+                let isMe = (email === currentUser.email);
+                let pRoles = u.projectRoles || {};
+                
+                let htmlRoles = '';
+                projetosNomes.forEach(p => {
+                    let r = pRoles[p] || 'leitor';
+                    let dis = (u.globalRole === 'admin' || isMe) ? 'disabled' : '';
+                    htmlRoles += `
+                        <div class="admin-slider-container">
+                            <span style="font-size:13px; font-weight:500;">${p}</span>
+                            <select id="sel-${email}-${p}" ${dis} onchange="salvarRolesUser('${email}')">
+                                <option value="leitor" ${r==='leitor'?'selected':''}>Leitor</option>
+                                <option value="editor" ${r==='editor'?'selected':''}>Editor</option>
+                                <option value="gerente" ${r==='gerente'?'selected':''}>Gerente</option>
+                            </select>
+                        </div>`;
+                });
+
+                let statusColor = u.status === 'desativado' ? 'color: var(--error);' : 'color: var(--primary);';
+                let mainRole = u.status === 'desativado' ? 'desativado' : (u.globalRole === 'admin' ? 'admin' : 'leitor');
+                let mainRoleText = u.globalRole === 'admin' ? 'Admin Global' : 'Usuário Padrão';
+                
+                list.innerHTML += `
+                    <div class="admin-user-card">
+                        <div class="header" onclick="toggleAdminRoles('${email}')">
+                            <div style="position:relative; width:48px; height:48px; border-radius:50%; background:var(--primary); display:flex; justify-content:center; align-items:center; color:white; overflow:visible; flex-shrink:0;">
+                                <img src="${u.foto || ''}" onerror="this.style.display='none'" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                                <span class="material-symbols-outlined" style="${u.foto ? 'display:none;' : ''}">person</span>
+                                <div class="role-badge role-${mainRole}" style="bottom:-6px; border-color:var(--surface-color); font-size:8px;">${mainRole.toUpperCase()}</div>
+                            </div>
+                            
+                            <div style="flex-grow:1;">
+                                <div style="font-weight:bold; font-size:16px;">${u.nome} <span style="font-size:12px; font-weight:normal; color:var(--text-muted);">(${email})</span></div>
+                                <div style="font-size:13px; ${statusColor} font-weight:500;">${mainRoleText} • ${u.status === 'ativo' ? 'Ativo' : 'Desativado'}</div>
+                            </div>
+                            
+                            <div style="display:flex; gap:8px;" onclick="event.stopPropagation()">
+                                ${!isMe && u.globalRole !== 'admin' ? `<button class="btn btn-sm btn-secondary" onclick="toggleAdmin('${email}', true)">Dar Admin</button>` : ''}
+                                ${!isMe && u.globalRole === 'admin' ? `<button class="btn btn-sm btn-warning" onclick="toggleAdmin('${email}', false)">Tirar Admin</button>` : ''}
+                                ${!isMe && u.status === 'ativo' ? `<button class="btn btn-sm btn-danger" onclick="toggleStatus('${email}', 'desativado')">Desativar</button>` : ''}
+                                ${!isMe && u.status === 'desativado' ? `<button class="btn btn-sm btn-success" onclick="toggleStatus('${email}', 'ativo')" style="background:#1ea446; color:white;">Reativar</button>` : ''}
+                                ${!isMe ? `<button class="btn btn-sm btn-secondary" onclick="apagarUser('${email}')" title="Apagar Registro"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>` : ''}
+                            </div>
+                            <span class="material-symbols-outlined" id="icon-${email}" style="color:var(--text-muted);">expand_more</span>
+                        </div>
+                        <div class="body-panel" id="roles-${email}">
+                            <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; font-weight:bold;">PERMISSÕES POR PROJETO:</div>
+                            ${htmlRoles || '<div style="font-size:13px; color:var(--text-muted);">Nenhum projeto existente.</div>'}
+                        </div>
+                    </div>`;
+            }
+        }
+
+        window.toggleAdmin = function(email, makeAdmin) { appData.users[email].globalRole = makeAdmin ? 'admin' : 'user'; enviarUpdateUserAdmin(email); }
+        window.toggleStatus = function(email, status) { appData.users[email].status = status; enviarUpdateUserAdmin(email); }
+        window.salvarRolesUser = function(email) {
+            let pRoles = {};
+            appData.projetos.forEach(p => { let sel = document.getElementById(`sel-${email}-${p.nome}`); if (sel) pRoles[p.nome] = sel.value; });
+            appData.users[email].projectRoles = pRoles; enviarUpdateUserAdmin(email);
+        }
+        window.apagarUser = function(email) { if(confirm("Apagar permanentemente este usuário da plataforma?")) enviarComando({ acao: 'adminExcluirUsuario', targetEmail: email }, "Excluindo..."); }
+        function enviarUpdateUserAdmin(email) { enviarComando({ acao: 'adminSalvarUsuario', targetEmail: email, userData: appData.users[email] }, "Atualizando..."); }
+
+        // ==========================================
+        // SISTEMA BASE (CORE EXPLORER)
+        // ==========================================
+        function getFileBadge(filename) {
+            let ext = filename.split('.').pop().toLowerCase();
+            if (ext === 'psd') return `<span class="soft-badge badge-psd" title="Photoshop">Ps</span>`;
+            if (ext === 'ai') return `<span class="soft-badge badge-ai" title="Illustrator">Ai</span>`;
+            if (ext === 'indd') return `<span class="soft-badge badge-indd" title="InDesign">Id</span>`;
+            if (ext === 'blend') return `<span class="soft-badge badge-blend" title="Blender">Bl</span>`;
+            if (ext === 'pdf') return `<span class="soft-badge badge-pdf" title="PDF">PDF</span>`;
+            return `<span class="material-symbols-outlined" style="font-size:16px; color: var(--primary);">image</span>`;
+        }
+
+        function setCarregando(ativo, texto = "Processando...") {
+            document.getElementById('loading-text').innerText = texto;
+            if(ativo) document.getElementById('loading-overlay').classList.add('active');
+            else document.getElementById('loading-overlay').classList.remove('active');
+        }
+
+        function sincronizarDrive(forcarAviso = false) {
+            if(URL_DO_APPS_SCRIPT === 'COLE_AQUI_A_URL_DO_SEU_WEB_APP') return;
+            if(isSyncing) return; 
+            isSyncing = true;
+            let btn = document.getElementById('btn-sync');
+            if(btn) btn.classList.add('syncing');
+            document.getElementById('sync-text').innerText = "Sincronizando...";
+            if(forcarAviso) setCarregando(true, "Sincronizando...");
+            
+            fetch(URL_DO_APPS_SCRIPT + "?nocache=" + Date.now()).then(res => res.json()).then(data => {
+                appData = data; 
+                document.getElementById('sync-text').innerText = "Sincronizado";
+                document.getElementById('sync-time').innerText = `(às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })})`;
+                renderizarTudo();
+            }).catch(err => { console.error(err); document.getElementById('sync-text').innerText = "Erro!"; })
+            .finally(() => { setCarregando(false); isSyncing = false; if(btn) btn.classList.remove('syncing'); });
+        }
+
+        function enviarComando(dados, mensagemLoading) {
+            setCarregando(true, mensagemLoading);
+            if (currentUser) { dados.userNome = currentUser.nome; dados.userEmail = currentUser.email; }
+            fetch(URL_DO_APPS_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
+            .then(res => res.json()).then(resultado => {
+                if(resultado.sucesso) sincronizarDrive(); 
+                else { alert(resultado.erro || "Erro."); setCarregando(false); }
+            }).catch(err => { alert("Erro de comunicação."); setCarregando(false); });
+        }
+
+        function renderizarTudo() {
+            renderizarHistorico();
+            renderizarVersoes();
+            if (document.getElementById('admin-dashboard').classList.contains('active')) renderizarAdminPanel();
+            if (document.getElementById('explorer').classList.contains('active')) {
+                renderTree();
+                renderExplorer();
+            }
+        }
+
+        function renomearItem(e, oldName) {
+            e.stopPropagation();
+            let newName = prompt(`Renomear '${oldName}' para:`, oldName);
+            if (newName && newName.trim() !== "" && newName !== oldName) {
+                enviarComando({ acao: 'renomearDiretorio', path: getPathString(), oldName: oldName, newName: newName.trim() }, "Renomeando...");
+            }
+        }
+
+        function expandPath(pathArr) {
+            if (pathArr.length > 0) collapsedPaths.delete(pathArr[0]);
+            if (pathArr.length > 1) collapsedPaths.delete(pathArr[0] + '/' + pathArr[1]);
+        }
+
+        function navegarPelaArvore(pathArray) {
+            currentPathArr = pathArray; currentLevel = pathArray.length;
+            expandPath(currentPathArr); renderTree(); renderExplorer();
+        }
+
+        function toggleNode(e, pathKey) {
+            e.stopPropagation(); 
+            if (collapsedPaths.has(pathKey)) collapsedPaths.delete(pathKey);
+            else collapsedPaths.add(pathKey);
+            renderTree();
+        }
+
+        function renderTree() {
+            const container = document.getElementById('sidebar-tree');
+            if(!container) return;
+            let html = '<ul class="tree-root">';
+            let isRootActive = currentLevel === 0 ? 'active' : '';
+            html += `<li class="tree-item ${isRootActive}" onclick="goLevel(0)"><span class="material-symbols-outlined" style="margin-left: 24px;">account_tree</span> <span class="tree-text">Projetos</span></li>`;
+
+            let projList = [...appData.projetos];
+            if(appData.order['projetos']) projList.sort((a,b) => (appData.order['projetos'].indexOf(a.nome) === -1 ? 999 : appData.order['projetos'].indexOf(a.nome)) - (appData.order['projetos'].indexOf(b.nome) === -1 ? 999 : appData.order['projetos'].indexOf(b.nome)));
+
+            projList.forEach(p => {
+                let isProjActive = currentLevel > 0 && currentPathArr[0] === p.nome;
+                let projIsExactLevel = currentLevel === 1 && isProjActive;
+                let pathKeyProj = p.nome;
+                let hasSub = appData.subprojetos[p.nome] && appData.subprojetos[p.nome].length > 0;
+                let isCollapsedProj = collapsedPaths.has(pathKeyProj);
+                let folderIconProj = isCollapsedProj ? 'folder' : 'folder_open';
+
+                html += `<ul class="tree-branch"><li class="tree-item ${projIsExactLevel ? 'active' : ''}">`;
+                if (hasSub) html += `<span class="material-symbols-outlined toggle-icon" onclick="toggleNode(event, '${pathKeyProj}')">${isCollapsedProj ? 'chevron_right' : 'expand_more'}</span>`;
+                else html += `<span class="material-symbols-outlined toggle-icon" style="opacity: 0; pointer-events: none;">remove</span>`;
+                html += `<span class="material-symbols-outlined folder-icon" onclick="toggleNode(event, '${pathKeyProj}')">${folderIconProj}</span><span class="tree-text" onclick="navegarPelaArvore(['${p.nome}'])">${p.nome}</span></li>`;
+
+                if (hasSub && !isCollapsedProj) {
+                    let subList = [...appData.subprojetos[p.nome]];
+                    let orderKey = 'subprojetos_' + p.nome;
+                    if(appData.order[orderKey]) subList.sort((a,b) => (appData.order[orderKey].indexOf(a.nome) === -1 ? 999 : appData.order[orderKey].indexOf(a.nome)) - (appData.order[orderKey].indexOf(b.nome) === -1 ? 999 : appData.order[orderKey].indexOf(b.nome)));
+                    html += `<ul class="tree-branch">`;
+                    subList.forEach(sub => {
+                        let isSubActive = currentLevel > 1 && isProjActive && currentPathArr[1] === sub.nome;
+                        let subIsExactLevel = currentLevel === 2 && isSubActive;
+                        let pathKeySub = p.nome + '/' + sub.nome;
+                        let hasPastas = appData.pastas[pathKeySub] && appData.pastas[pathKeySub].length > 0;
+                        let isCollapsedSub = collapsedPaths.has(pathKeySub);
+                        let folderIconSub = isCollapsedSub ? 'folder' : 'folder_open';
+
+                        html += `<li class="tree-item ${subIsExactLevel ? 'active' : ''}">`;
+                        if (hasPastas) html += `<span class="material-symbols-outlined toggle-icon" onclick="toggleNode(event, '${pathKeySub}')">${isCollapsedSub ? 'chevron_right' : 'expand_more'}</span>`;
+                        else html += `<span class="material-symbols-outlined toggle-icon" style="opacity: 0; pointer-events: none;">remove</span>`;
+                        html += `<span class="material-symbols-outlined folder-icon" onclick="toggleNode(event, '${pathKeySub}')">${folderIconSub}</span><span class="tree-text" onclick="navegarPelaArvore(['${p.nome}', '${sub.nome}'])">${sub.nome}</span></li>`;
+
+                        if (hasPastas && !isCollapsedSub) {
+                            html += `<ul class="tree-branch">`;
+                            appData.pastas[pathKeySub].forEach(pasta => {
+                                let isPastaActive = currentLevel === 3 && isSubActive && currentPathArr[2] === pasta;
+                                html += `<li class="tree-item ${isPastaActive ? 'active' : ''}"><span class="material-symbols-outlined toggle-icon" style="opacity: 0; pointer-events: none;">remove</span><span class="material-symbols-outlined folder-icon">folder</span><span class="tree-text" onclick="navegarPelaArvore(['${p.nome}', '${sub.nome}', '${pasta}'])">${pasta}</span></li>`;
+                            });
+                            html += `</ul>`;
+                        }
+                    });
+                    html += `</ul>`;
+                }
+                html += `</ul>`;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        }
+
+        function getPathString() { return currentPathArr.join('/'); }
+        function goLevel(index) { currentPathArr = currentPathArr.slice(0, index); currentLevel = index; expandPath(currentPathArr); renderTree(); renderExplorer(); }
+        function entrarNaPasta(nome) { currentPathArr.push(nome); currentLevel++; expandPath(currentPathArr); renderTree(); renderExplorer(); }
+
+        function renderExplorer() {
+            const container = document.getElementById('explorer-grid');
+            const toolbar = document.getElementById('explorer-toolbar');
+            const breadcrumbs = document.getElementById('breadcrumbs-container');
+            container.innerHTML = '';
+            
+            let perm = getPermissaoAtual(); 
+            let isAdmin = currentUser && currentUser.globalRole === 'admin';
+
+            let htmlBc = `<span onclick="goLevel(0)"><span class="material-symbols-outlined">account_tree</span> Projetos</span>`;
+            for(let i=0; i<currentPathArr.length; i++) htmlBc += ` > <span onclick="goLevel(${i+1})">${currentPathArr[i]}</span>`;
+            breadcrumbs.innerHTML = htmlBc;
+            let spans = breadcrumbs.querySelectorAll('span');
+            spans[spans.length-1].classList.add('active-crumb');
+
+            let canCreate = isAdmin || (perm === 'gerente');
+            let canUpload = canCreate || (perm === 'editor');
+            let canRename = canCreate;
+
+            // 🔹 INDICADOR DE STATUS E AÇÕES NA BARRA 🔹
+            let permText = perm.charAt(0).toUpperCase() + perm.slice(1);
+            let indicatorHtml = currentLevel > 0 ? 
+                `<div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:13px; color:var(--text-muted);">Você é:</span>
+                    <span class="role-badge-inline role-${perm}">${permText} deste projeto</span>
+                </div>` : 
+                `<div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:13px; color:var(--text-muted);">Permissão Global:</span>
+                    <span class="role-badge-inline role-${isAdmin ? 'admin' : 'leitor'}">${isAdmin ? 'Administrador' : 'Leitor Padrão'}</span>
+                </div>`;
+            
+            let actionsHtml = '';
+
+            if (currentLevel === 0) {
+                if(isAdmin) actionsHtml = `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">add</span> Novo Projeto</button>`;
+                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
+
+                let lista = [...appData.projetos];
+                if(appData.order['projetos']) lista.sort((a,b) => (appData.order['projetos'].indexOf(a.nome) === -1 ? 999 : appData.order['projetos'].indexOf(a.nome)) - (appData.order['projetos'].indexOf(b.nome) === -1 ? 999 : appData.order['projetos'].indexOf(b.nome)));
+                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Nenhum projeto.</div>`;
+                
+                lista.forEach(p => {
+                    let thumbHtml = p.thumb ? `<img src="${p.thumb}" class="card-thumb">` : `<div class="card-thumb"><span class="material-symbols-outlined">landscape</span></div>`;
+                    let dragAttr = isAdmin ? `draggable="true" ondragstart="dragStartSort(event, '${p.nome}', 0)" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${p.nome}', 0)"` : '';
+                    let renameBtn = isAdmin ? `<button class="rename-btn" onclick="renomearItem(event, '${p.nome}')" title="Renomear"><span class="material-symbols-outlined" style="font-size: 16px;">edit</span></button>` : '';
+                    
+                    container.innerHTML += `
+                        <div class="card-vertical" ${dragAttr} onclick="entrarNaPasta('${p.nome}')">
+                            ${thumbHtml}
+                            <div class="card-title-wrapper">
+                                <div class="card-title" title="${p.nome}">${p.nome}</div>
+                                ${renameBtn}
+                            </div>
+                            ${isAdmin ? `<div class="drag-hint">Soltar Imagem/Ordem</div>` : ''}
+                        </div>`;
+                });
+            } 
+            else if (currentLevel === 1) {
+                if(canCreate) actionsHtml = `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">add</span> Novo Subprojeto</button>`;
+                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
+
+                let projName = currentPathArr[0];
+                let lista = appData.subprojetos[projName] ? [...appData.subprojetos[projName]] : [];
+                if(appData.order['subprojetos_' + projName]) lista.sort((a,b) => (appData.order['subprojetos_' + projName].indexOf(a.nome) === -1 ? 999 : appData.order['subprojetos_' + projName].indexOf(a.nome)) - (appData.order['subprojetos_' + projName].indexOf(b.nome) === -1 ? 999 : appData.order['subprojetos_' + projName].indexOf(b.nome)));
+                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Nenhum subprojeto.</div>`;
+                
+                lista.forEach(p => {
+                    let thumbHtml = p.thumb ? `<img src="${p.thumb}" class="card-thumb">` : `<div class="card-thumb"><span class="material-symbols-outlined">collections_bookmark</span></div>`;
+                    let dragAttr = canCreate ? `draggable="true" ondragstart="dragStartSort(event, '${p.nome}', 1)" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${p.nome}', 1)"` : '';
+                    let renameBtn = canRename ? `<button class="rename-btn" onclick="renomearItem(event, '${p.nome}')" title="Renomear"><span class="material-symbols-outlined" style="font-size: 16px;">edit</span></button>` : '';
+
+                    container.innerHTML += `
+                        <div class="card-vertical" ${dragAttr} onclick="entrarNaPasta('${p.nome}')">
+                            ${thumbHtml}
+                            <div class="card-title-wrapper">
+                                <div class="card-title" title="${p.nome}">${p.nome}</div>
+                                ${renameBtn}
+                            </div>
+                            ${canCreate ? `<div class="drag-hint">Soltar Imagem/Ordem</div>` : ''}
+                        </div>`;
+                });
+            }
+            else if (currentLevel === 2) {
+                if(canCreate) actionsHtml = `<button class="btn btn-primary" onclick="criarDiretorioAtual()"><span class="material-symbols-outlined">create_new_folder</span> Nova Pasta</button>`;
+                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
+
+                let pathKey = getPathString();
+                let lista = appData.pastas[pathKey] || [];
+                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Nenhuma pasta aqui.</div>`;
+                lista.forEach(n => {
+                    let renameBtn = canRename ? `<button class="rename-btn" onclick="renomearItem(event, '${n}')" title="Renomear"><span class="material-symbols-outlined" style="font-size: 16px;">edit</span></button>` : '';
+                    container.innerHTML += `
+                        <div class="folder-card" onclick="entrarNaPasta('${n}')">
+                            <span class="material-symbols-outlined" style="font-size:48px; color:var(--primary); margin-bottom:8px;">folder</span>
+                            <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
+                                <strong style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="${n}">${n}</strong>
+                                ${renameBtn}
+                            </div>
+                        </div>`;
+                });
+            }
+            else if (currentLevel === 3) {
+                if(canUpload) actionsHtml = `<button class="btn btn-success" onclick="setupUploadEClick()"><span class="material-symbols-outlined">upload</span> Upload de Arquivo</button>`;
+                toolbar.innerHTML = `<div>${indicatorHtml}</div><div>${actionsHtml}</div>`;
+
+                let pathKey = getPathString();
+                let lista = appData.arquivos.filter(f => f.path === pathKey);
+                if(lista.length === 0) container.innerHTML = `<div class="empty-state">Pasta vazia.</div>`;
+                
+                lista.forEach((f, idx) => {
+                    let mainBadge = getFileBadge(f.nome);
+                    let auxiliaresHTML = "";
+                    if(f.auxiliares.length > 0) {
+                        auxiliaresHTML = `<div class="aux-container"><div class="aux-title">Anexos (${f.auxiliares.length})</div>`;
+                        f.auxiliares.forEach(aux => {
+                            let auxBadge = getFileBadge(aux.nome);
+                            let dragAux = canUpload ? `draggable="true" ondragstart="dragStartAux(event, '${aux.id}', '${f.nome}')"` : '';
+                            auxiliaresHTML += `<div class="aux-item" ${dragAux}><span class="aux-name">${auxBadge} <span title="${aux.nome}">${aux.nome}</span></span><a href="${aux.url}" target="_blank" style="text-decoration:none;"><button class="btn btn-secondary btn-sm"><span class="material-symbols-outlined" style="font-size:16px;">download</span></button></a></div>`;
+                        });
+                        auxiliaresHTML += `</div>`;
+                    }
+                    
+                    let driveViewUrl = `https://drive.google.com/file/d/${f.id}/view`;
+                    let dragAttr = canUpload ? `draggable="true" ondragstart="dragStartFile(event, '${f.id}', '${f.nome}')" ondragover="dropAllow(event)" ondragleave="dropLeave(event)" ondrop="dropOnCard(event, '${f.nome}', 3)"` : '';
+                    let replaceBtn = canUpload ? `<button class="replace-btn" onclick="iniciarSubstituicao(event, '${f.nome}')"><span class="material-symbols-outlined" style="font-size: 18px;">find_replace</span> Substituir</button>` : '';
+
+                    container.innerHTML += `
+                        <div class="file-card" ${dragAttr}>
+                            <div style="position: absolute; top: 12px; left: 12px; z-index: 2;">${mainBadge}</div>
+                            <div class="star-badge"><span class="material-symbols-outlined" style="font-size:14px; font-variation-settings: 'FILL' 1;">star</span> v${f.versao}.0</div>
+                            <div class="file-thumb-wrapper">
+                                <span class="material-symbols-outlined file-thumb-fallback">draft</span>
+                                <img src="${f.thumbUrl}" onload="this.style.opacity=1" onerror="this.style.opacity=0">
+                                ${replaceBtn}
+                            </div>
+                            <div class="file-name" title="${f.nome}">${f.nome}</div>
+                            <div class="file-date">${f.data}</div>
+                            
+                            <!-- 🔹 BOTÕES DE AÇÃO 🔹 -->
+                            <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                                <a href="${f.downloadUrl}" target="_blank" style="width:100%; text-decoration:none;">
+                                    <button class="btn btn-primary" style="width:100%;"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Baixar</button>
+                                </a>
+                                <a href="${driveViewUrl}" target="_blank" style="width:100%; text-decoration:none;">
+                                    <button class="btn btn-drive" style="width:100%;">
+                                        <svg width="16" height="16" viewBox="0 0 87.3 78" style="vertical-align: middle; margin-right: 4px;">
+                                            <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066da"/>
+                                            <path d="M43.65 25L29.9 1.2C28.5 2 27.35 3.1 26.55 4.5l-25.35 43.9c-.8 1.4-1.2 2.95-1.2 4.5h27.5L43.65 25z" fill="#00ac47"/>
+                                            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 23.75-41.15c.8-1.4 1.2-2.95 1.2-4.5H55.9l5.85 10.15 11.8 20.45-13.75 23.8h13.75z" fill="#ea4335"/>
+                                            <path d="M43.65 25L57.4 1.2C56 0.4 54.4 0 52.8 0H34.5c-1.6 0-3.2.4-4.6 1.2L43.65 25z" fill="#00832d"/>
+                                            <path d="M55.9 25H27.5l-13.75 23.8 13.75 23.8h54.9L68.65 48.8 55.9 25z" fill="#2684fc"/>
+                                            <path d="M73.55 76.8L59.8 53 46.05 76.8h27.5z" fill="#ffba00"/>
+                                        </svg> Ver no Drive
+                                    </button>
+                                </a>
+                            </div>
+                            ${canUpload ? `<div class="drag-hint">Agrupar Anexo</div>` : ''}
+                            ${auxiliaresHTML}
+                        </div>`;
+                });
+            }
+        }
+
+        function criarDiretorioAtual() {
+            let n = prompt("Nome:");
+            if(n) enviarComando({ acao: 'criarDiretorio', path: getPathString(), nomePasta: n }, "Criando...");
+        }
+
+        function setupUploadEClick() {
+            let inp = document.getElementById('file-input');
+            inp.onchange = e => {
+                let file = e.target.files[0];
+                if(!file) return;
+                const reader = new FileReader();
+                reader.onload = r => { enviarComando({ acao: 'upload', path: getPathString(), nome: file.name, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Enviando arquivo..."); };
+                reader.readAsDataURL(file);
+                inp.value = '';
+            };
+            inp.click();
+        }
+
+        let arquivoParaSubstituir = "";
+        function iniciarSubstituicao(e, targetName) {
+            e.stopPropagation(); 
+            arquivoParaSubstituir = targetName;
+            document.getElementById('file-replace-input').click();
+        }
+
+        document.getElementById('file-replace-input').addEventListener('change', function(e) {
+            let file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = r => { enviarComando({ acao: 'substituir', path: getPathString(), nome: arquivoParaSubstituir, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Substituindo arquivo..."); };
+            reader.readAsDataURL(file);
+            this.value = '';
+        });
+
+        let dragSrcName = null; let dragSrcLevel = null;
+        function dragStartSort(e, name, level) { dragSrcName = name; dragSrcLevel = level; e.dataTransfer.setData('text/plain', JSON.stringify({ action: 'sort' })); e.stopPropagation(); }
+        function dragStartFile(e, id, name) { e.dataTransfer.setData('text/plain', JSON.stringify({ action: 'file', id: id, name: name })); e.stopPropagation(); }
+        function dragStartAux(e, id, parentName) { e.dataTransfer.setData('text/plain', JSON.stringify({ action: 'aux', id: id, parentName: parentName })); document.body.classList.add('dragging-aux'); e.stopPropagation(); }
+        
+        function dropAllow(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function dropLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+        function dropAllowGrid(e) { e.preventDefault(); }
+        
+        function dropGrid(e) {
+            e.preventDefault(); document.body.classList.remove('dragging-aux');
+            if (currentLevel !== 3) return; 
+            let dataStr = e.dataTransfer.getData("text/plain");
+            if (!dataStr) return;
+            let data = JSON.parse(dataStr);
+            if (data.action === 'aux') enviarComando({ acao: 'desagrupar', auxId: data.id, path: getPathString() }, "Desagrupando...");
+        }
+
+        function dropOnCard(e, targetName, levelDrop) {
+            e.preventDefault(); e.currentTarget.classList.remove('drag-over'); e.stopPropagation();
+            let dataStr = e.dataTransfer.getData("text/plain");
+
+            if(!dataStr && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                if (levelDrop === 0 || levelDrop === 1) {
+                    let file = e.dataTransfer.files[0];
+                    let thumbKey = levelDrop === 0 ? targetName : currentPathArr[0] + '_' + targetName;
+                    const reader = new FileReader();
+                    reader.onload = r => { enviarComando({ acao: 'setThumbnail', thumbKey: thumbKey, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Atualizando capa..."); };
+                    reader.readAsDataURL(file);
+                    return;
+                }
+                if (levelDrop === 3) {
+                    let file = e.dataTransfer.files[0];
+                    const reader = new FileReader();
+                    reader.onload = r => { enviarComando({ acao: 'uploadAux', path: getPathString(), targetName: targetName, nome: file.name, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Anexando..."); };
+                    reader.readAsDataURL(file);
+                    return;
+                }
+            }
+
+            if (!dataStr) return;
+            let data = JSON.parse(dataStr);
+            if(data.action === 'sort' && dragSrcName !== targetName && levelDrop === dragSrcLevel) {
+                let orderKey = levelDrop === 0 ? 'projetos' : 'subprojetos_' + currentPathArr[0];
+                if(!appData.order[orderKey]) {
+                    if(levelDrop === 0) appData.order[orderKey] = appData.projetos.map(p => p.nome);
+                    if(levelDrop === 1) appData.order[orderKey] = appData.subprojetos[currentPathArr[0]].map(p => p.nome);
+                }
+                let arr = appData.order[orderKey];
+                let fromIdx = arr.indexOf(dragSrcName);
+                let toIdx = arr.indexOf(targetName);
+                if(fromIdx === -1) { arr.push(dragSrcName); fromIdx = arr.length - 1; }
+                if(toIdx === -1) { arr.push(targetName); toIdx = arr.length - 1; }
+                arr.splice(fromIdx, 1);
+                arr.splice(toIdx, 0, dragSrcName);
+                enviarComando({ acao: 'salvarOrdem', orderMap: appData.order }, "Salvando ordem...");
+                return;
+            }
+
+            if (levelDrop === 3) {
+                if (data.action === 'file' && data.name !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Agrupando...");
+                else if (data.action === 'aux' && data.parentName !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Movendo anexo...");
+            }
+        }
+
+        document.addEventListener('dragend', () => { document.body.classList.remove('dragging-aux'); dragSrcName = null; dragSrcLevel = null; });
+
+        function switchTab(tabId) { 
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
+            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active')); 
+            document.getElementById(tabId).classList.add('active'); 
+            document.querySelectorAll('.nav-links a').forEach(l => { if (l.getAttribute('onclick') && l.getAttribute('onclick').includes(tabId)) l.classList.add('active'); });
+            renderizarTudo(); 
+        }
+
+        function classificarLog(msg) {
+            let m = msg.toLowerCase();
+            if (m.includes('agrupado') || m.includes('desagrupado')) return 'agrupamentos';
+            if (m.includes('anexo') || m.includes('versão enviada') || m.includes('novo arquivo') || m.includes('upload') || m.includes('capa') || m.includes('substituiu')) return 'uploads';
+            if (m.includes('excluída') || m.includes('excluído') || m.includes('lixeira')) return 'exclusoes';
+            if (m.includes('auto-organizou') || m.includes('sistema')) return 'backend';
+            if (m.includes('criou') || m.includes('restaurou') || m.includes('detectada') || m.includes('movido') || m.includes('renomeou') || m.includes('perfil')) return 'movimentacoes';
+            return 'movimentacoes';
+        }
+
+        function filtrarLog(categoria, btn) {
+            filtroLogAtual = categoria; paginaAtualLogs = 1; 
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+            renderizarHistorico();
+        }
+
+        function mudarPagina(direcao) { paginaAtualLogs += direcao; renderizarHistorico(); }
+        
+        function renderizarHistorico() {
+            const tbody = document.getElementById('historico-table'); 
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            let logsFiltrados = appData.logs.filter(l => filtroLogAtual === 'todos' || classificarLog(l.msg) === filtroLogAtual);
+            let total = Math.ceil(logsFiltrados.length / itensPorPagina) || 1;
+            if (paginaAtualLogs > total) paginaAtualLogs = total; if (paginaAtualLogs < 1) paginaAtualLogs = 1;
+            let paginados = logsFiltrados.slice((paginaAtualLogs - 1) * itensPorPagina, paginaAtualLogs * itensPorPagina);
+
+            if(paginados.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><span class="material-symbols-outlined" style="font-size:48px;">receipt_long</span><br>Nenhum registro.</div></td></tr>`; 
+                document.getElementById('page-info').innerText = `Página 1 de 1`;
+                document.getElementById('btn-prev').disabled = true; document.getElementById('btn-next').disabled = true; return; 
+            }
+
+            paginados.forEach(l => { 
+                let userDisplay = l.user || "Sistema";
+                let msgDisplay = l.msg;
+                let emailStr = l.email ? `onclick="verPerfilHistorico('${l.email}')" style="cursor:pointer; color:var(--primary); text-decoration:underline;" title="Ver Perfil"` : '';
+                
+                tbody.innerHTML += `<tr>
+                    <td>${msgDisplay}</td>
+                    <td style="font-weight: 500; font-size: 13px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">person</span> 
+                            <span ${emailStr}>${userDisplay}</span>
+                        </div>
+                    </td>
+                    <td style="white-space:nowrap; color: var(--text-muted); font-size:13px;">${l.data}</td>
+                </tr>`; 
+            });
+
+            document.getElementById('page-info').innerText = `Página ${paginaAtualLogs} de ${total}`;
+            document.getElementById('btn-prev').disabled = (paginaAtualLogs === 1);
+            document.getElementById('btn-next').disabled = (paginaAtualLogs === total);
+        }
+
+        function renderizarVersoes() {
+            const tbody = document.getElementById('versoes-table'); 
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if(appData.arquivos.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Nenhum arquivo ativo no momento.</td></tr>`; return; }
+
+            let isAdminOrManager = getPermissaoAtual() === 'admin' || getPermissaoAtual() === 'gerente';
+
+            appData.arquivos.forEach((f) => {
+                let badge = getFileBadge(f.nome);
+                let btnDisable = (f.historico.length === 0 || !isAdminOrManager) ? "disabled title='Sem permissão ou sem versões'" : "";
+                tbody.innerHTML += `<tr>
+                    <td><div style="display:flex; align-items:center; gap:8px;">${badge} <span title="${f.nome}">${f.nome}</span></div></td>
+                    <td style="font-size:13px; color:var(--text-muted);">${f.path}</td>
+                    <td><b>v${f.versao}.0</b></td>
+                    <td style="font-size:13px; color:var(--text-muted);">${f.data}</td>
+                    <td><button class="btn btn-warning btn-sm" ${btnDisable} onclick="abrirModalRestauracao('${f.id}')"><span class="material-symbols-outlined" style="font-size:16px;">history</span> Restaurar</button></td>
+                </tr>`;
+            });
+        }
+
+        let arqParaRestaurarId = null;
+        function abrirModalRestauracao(idArq) {
+            let f = appData.arquivos.find(a => a.id === idArq);
+            if(!f) return;
+            arqParaRestaurarId = idArq;
+            let sel = document.getElementById('select-versoes'); sel.innerHTML = '';
+            f.historico.forEach(h => { sel.innerHTML += `<option value="${h.id}">Backup (v${h.versao}.0) - ${h.data}</option>`; });
+            document.getElementById('modal-restauracao').classList.add('active');
+        }
+        function fecharModalRestauracao() { document.getElementById('modal-restauracao').classList.remove('active'); }
+        function confirmarRestauracao() {
+            let f = appData.arquivos.find(a => a.id === arqParaRestaurarId);
+            enviarComando({ acao: 'restaurar', path: f.path, nome: f.nome, idArquivoAntigo: document.getElementById('select-versoes').value }, "Restaurando...");
+            fecharModalRestauracao();
+        }
+
+        function toggleTheme() { 
+            const isDark = document.body.classList.toggle('dark-mode'); 
+            document.getElementById('theme-icon').innerText = isDark ? 'light_mode' : 'dark_mode';
+            localStorage.setItem('lootshare_theme', isDark ? 'dark' : 'light'); 
+        }
+
+        window.onload = function() { 
+            if(localStorage.getItem('lootshare_theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('theme-icon').innerText = 'light_mode'; }
+            checarSessao(); 
+        };
+    </script>
+</body>
+</html>
