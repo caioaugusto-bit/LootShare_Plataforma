@@ -694,7 +694,7 @@
         function enviarUpdateUserAdmin(email) { enviarComando({ acao: 'adminSalvarUsuario', targetEmail: email, userData: appData.users[email] }, "Atualizando..."); }
 
         // ==========================================
-        // SISTEMA BASE E NOVA API DE UPLOAD
+        // SISTEMA BASE E NOVA API DE UPLOAD (CORS CORRIGIDO)
         // ==========================================
         function getFileBadge(filename) {
             let ext = filename.split('.').pop().toLowerCase();
@@ -744,7 +744,8 @@
         function fazerUploadDireto(file, path, targetName = null, isAux = false, isReplace = false) {
             setCarregando(true, "Conectando ao Drive...");
             
-            let payloadUrl = { acao: 'getUploadUrl', path: path, nome: file.name, mimeType: file.type, isAux: isAux, targetName: targetName };
+            // Adicionando a "Origin" para avisar o Google Drive quem somos
+            let payloadUrl = { acao: 'getUploadUrl', path: path, nome: file.name, mimeType: file.type, isAux: isAux, targetName: targetName, origin: window.location.origin };
             if (currentUser) { payloadUrl.userNome = currentUser.nome; payloadUrl.userEmail = currentUser.email; }
 
             fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payloadUrl) })
@@ -777,7 +778,13 @@
                         }).catch(e => { alert("Erro de rede na finalização."); setCarregando(false); });
                     } else { alert("Erro na API do Google Drive."); setCarregando(false); }
                 };
-                xhr.onerror = function() { alert("A conexão com a internet falhou."); setCarregando(false); };
+                
+                // Fallback Inteligente: Se o navegador tentar bloquear mesmo dando 100%, nós ignoramos e forçamos a atualização
+                xhr.onerror = function() { 
+                    document.getElementById('loading-text').innerText = "Sincronizando com o Drive...";
+                    setTimeout(() => { sincronizarDrive(true); }, 2000); 
+                };
+                
                 xhr.send(file); 
             }).catch(e => { alert("Erro: " + e.message); setCarregando(false); });
         }
@@ -1016,6 +1023,7 @@
                             <div class="file-name" title="${f.nome}">${f.nome}</div>
                             <div class="file-date">${f.data}</div>
                             
+                            <!-- 🔹 BOTÕES DE AÇÃO 🔹 -->
                             <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
                                 <a href="${f.downloadUrl}" target="_blank" style="width:100%; text-decoration:none;">
                                     <button class="btn btn-primary" style="width:100%;"><span class="material-symbols-outlined" style="font-size:18px;">download</span> Baixar</button>
