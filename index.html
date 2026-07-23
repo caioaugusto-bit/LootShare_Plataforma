@@ -242,7 +242,6 @@
         </div>
     </div>
 
-    <!-- MODAL PERFIL -->
     <div id="modal-perfil" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-perfil')">
         <div class="modal-content" style="text-align: center; position:relative;">
             <button class="close-btn" id="btn-fechar-modal-perfil" onclick="fecharModalPerfil()"><span class="material-symbols-outlined">close</span></button>
@@ -277,7 +276,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE UPLOADS MULTIPLOS -->
     <div id="modal-upload" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-upload')">
         <div class="modal-content" style="text-align: center;">
             <button class="close-btn" onclick="fecharModalUpload()"><span class="material-symbols-outlined">close</span></button>
@@ -298,7 +296,6 @@
         </div>
     </div>
 
-    <!-- MODAL ZOOM (TELA CHEIA) -->
     <div id="modal-zoom" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-zoom')">
         <div style="position: relative; max-width: 90vw; max-height: 90vh;">
             <button class="close-btn" style="position: absolute; top: -16px; right: -16px; background: var(--container-bg); z-index: 10;" onclick="fecharModalZoom()"><span class="material-symbols-outlined">close</span></button>
@@ -306,7 +303,6 @@
         </div>
     </div>
 
-    <!-- TRACKER EM SEGUNDO PLANO -->
     <div id="upload-tracker">
         <div class="tracker-header" onclick="toggleTrackerBody()">
             <div style="display:flex; align-items:center; gap:8px;">
@@ -799,14 +795,17 @@
             .finally(() => { setCarregando(false); isSyncing = false; if(btn) btn.classList.remove('syncing'); });
         }
 
-        function enviarComando(dados, mensagemLoading) {
-            setCarregando(true, mensagemLoading);
+        function enviarComando(dados, mensagemLoading, skipSync = false) {
+            if(mensagemLoading) setCarregando(true, mensagemLoading);
             if (currentUser) { dados.userNome = currentUser.nome; dados.userEmail = currentUser.email; }
             fetch(URL_DO_APPS_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) })
             .then(res => res.json()).then(resultado => {
-                if(resultado.sucesso) sincronizarDrive(); 
-                else { alert(resultado.erro || "Erro."); setCarregando(false); }
-            }).catch(err => { alert("Erro de comunicação."); setCarregando(false); });
+                if(resultado.sucesso) {
+                    if(!skipSync) sincronizarDrive(); 
+                    else if(mensagemLoading) setCarregando(false);
+                } 
+                else { alert(resultado.erro || "Erro."); if(mensagemLoading) setCarregando(false); }
+            }).catch(err => { alert("Erro de comunicação."); if(mensagemLoading) setCarregando(false); });
         }
 
         function abrirModalUpload() {
@@ -946,7 +945,6 @@
             document.getElementById('btn-start-uploads').disabled = (pendentes === 0 || isUploadingFiles);
         }
 
-        // 👇 FUNÇÃO QUE EU HAVIA ESQUECIDO 👇
         function renderizarTudo() {
             renderizarHistorico();
             renderizarVersoes();
@@ -957,11 +955,43 @@
             }
         }
 
+        // 🔹 ATUALIZAÇÃO OTIMISTA NAS AÇÕES (NÃO TEM MAIS DELAY DO GOOGLE) 🔹
+        function criarDiretorioAtual() {
+            let n = prompt("Nome da nova pasta:");
+            if(n && n.trim() !== "") {
+                let nameStr = n.trim();
+                let pathStr = getPathString();
+                
+                if (!appData.pastasContent[pathStr]) appData.pastasContent[pathStr] = [];
+                if (!appData.pastasContent[pathStr].includes(nameStr)) {
+                    appData.pastasContent[pathStr].push(nameStr);
+                    if (pathStr === '') appData.projetos.push({ nome: nameStr });
+                    renderizarTudo(); // Re-renderiza instantâneo
+                }
+
+                // Envia pro Google em background e skipSync = true
+                enviarComando({ acao: 'criarDiretorio', path: pathStr, nomePasta: nameStr }, "Criando...", true);
+            }
+        }
+
         function renomearItem(e, oldName) {
             e.stopPropagation();
             let newName = prompt(`Renomear '${oldName}' para:`, oldName);
             if (newName && newName.trim() !== "" && newName !== oldName) {
-                enviarComando({ acao: 'renomearDiretorio', path: getPathString(), oldName: oldName, newName: newName.trim() }, "Renomeando...");
+                let nameStr = newName.trim();
+                let pathStr = getPathString();
+                
+                if (appData.pastasContent[pathStr]) {
+                    let idx = appData.pastasContent[pathStr].indexOf(oldName);
+                    if(idx !== -1) appData.pastasContent[pathStr][idx] = nameStr;
+                }
+                if (pathStr === '') {
+                    let pIdx = appData.projetos.findIndex(p => p.nome === oldName);
+                    if(pIdx !== -1) appData.projetos[pIdx].nome = nameStr;
+                }
+                renderizarTudo();
+
+                enviarComando({ acao: 'renomearDiretorio', path: pathStr, oldName: oldName, newName: nameStr }, "Renomeando...", true);
             }
         }
 
@@ -1246,7 +1276,7 @@
                     let nextPath = currentPathArr.length === 0 ? targetName : currentPathArr.join('/') + '/' + targetName;
                     let thumbKey = nextPath.replace(/\//g, '_');
                     const reader = new FileReader();
-                    reader.onload = r => { enviarComando({ acao: 'setThumbnail', thumbKey: thumbKey, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Atualizando capa..."); };
+                    reader.onload = r => { enviarComando({ acao: 'setThumbnail', thumbKey: thumbKey, mimeType: file.type, base64: r.target.result.split(',')[1] }, "Atualizando capa...", true); };
                     reader.readAsDataURL(file);
                     return;
                 } else {
@@ -1271,13 +1301,13 @@
                 if(toIdx === -1) { arr.push(targetName); toIdx = arr.length - 1; }
                 arr.splice(fromIdx, 1);
                 arr.splice(toIdx, 0, dragSrcName);
-                enviarComando({ acao: 'salvarOrdem', orderMap: appData.order }, "Salvando ordem...");
+                enviarComando({ acao: 'salvarOrdem', orderMap: appData.order }, "Salvando ordem...", true);
                 return;
             }
 
             if (levelDrop === 'arquivo') {
-                if (data.action === 'file' && data.name !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Agrupando...");
-                else if (data.action === 'aux' && data.parentName !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Movendo anexo...");
+                if (data.action === 'file' && data.name !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Agrupando...", true);
+                else if (data.action === 'aux' && data.parentName !== targetName) enviarComando({ acao: 'agrupar', path: getPathString(), draggedId: data.id, targetName: targetName }, "Movendo anexo...", true);
             }
         }
 
