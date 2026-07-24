@@ -242,6 +242,7 @@
         </div>
     </div>
 
+    <!-- MODAL PERFIL -->
     <div id="modal-perfil" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-perfil')">
         <div class="modal-content" style="text-align: center; position:relative;">
             <button class="close-btn" id="btn-fechar-modal-perfil" onclick="fecharModalPerfil()"><span class="material-symbols-outlined">close</span></button>
@@ -276,6 +277,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE UPLOADS MULTIPLOS -->
     <div id="modal-upload" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-upload')">
         <div class="modal-content" style="text-align: center;">
             <button class="close-btn" onclick="fecharModalUpload()"><span class="material-symbols-outlined">close</span></button>
@@ -296,13 +298,16 @@
         </div>
     </div>
 
+    <!-- 🔹 MODAL ZOOM (ATUALIZADO PARA SUPORTAR IFRAME) 🔹 -->
     <div id="modal-zoom" class="modal-overlay" onclick="fecharModalSeClicarFora(event, 'modal-zoom')">
-        <div style="position: relative; max-width: 90vw; max-height: 90vh;">
+        <div style="position: relative; width: 90vw; height: 90vh; display:flex; justify-content:center; align-items:center;">
             <button class="close-btn" style="position: absolute; top: -16px; right: -16px; background: var(--container-bg); z-index: 10;" onclick="fecharModalZoom()"><span class="material-symbols-outlined">close</span></button>
-            <img id="zoom-img" src="" style="max-width: 100%; max-height: 90vh; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); object-fit: contain; background: var(--surface-color);">
+            <img id="zoom-img" src="" style="max-width: 100%; max-height: 90vh; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); object-fit: contain; background: var(--surface-color); display:none;">
+            <iframe id="zoom-iframe" src="" style="width: 100%; height: 100%; border: none; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: var(--surface-color); display:none;"></iframe>
         </div>
     </div>
 
+    <!-- TRACKER EM SEGUNDO PLANO -->
     <div id="upload-tracker">
         <div class="tracker-header" onclick="toggleTrackerBody()">
             <div style="display:flex; align-items:center; gap:8px;">
@@ -554,14 +559,34 @@
             }
         }
 
-        function abrirModalZoom(url) {
-            document.getElementById('zoom-img').src = url;
+        // 🔹 NOVA FUNÇÃO DE ZOOM INTELIGENTE 🔹
+        function abrirModalZoom(idArquivo, nomeArquivo, thumbUrl) {
+            let ext = nomeArquivo.split('.').pop().toLowerCase();
+            let isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
+            
+            let imgEl = document.getElementById('zoom-img');
+            let iframeEl = document.getElementById('zoom-iframe');
+            
+            if (isImage) {
+                imgEl.src = thumbUrl;
+                imgEl.style.display = 'block';
+                iframeEl.style.display = 'none';
+                iframeEl.src = '';
+            } else {
+                imgEl.style.display = 'none';
+                imgEl.src = '';
+                // Carrega o visualizador nativo do Google Drive
+                iframeEl.src = `https://drive.google.com/file/d/${idArquivo}/preview`;
+                iframeEl.style.display = 'block';
+            }
+            
             document.getElementById('modal-zoom').classList.add('active');
         }
         
         function fecharModalZoom() {
             document.getElementById('modal-zoom').classList.remove('active');
             document.getElementById('zoom-img').src = "";
+            document.getElementById('zoom-iframe').src = "";
         }
 
         let perfilFotoBase64 = null;
@@ -945,17 +970,6 @@
             document.getElementById('btn-start-uploads').disabled = (pendentes === 0 || isUploadingFiles);
         }
 
-        function renderizarTudo() {
-            renderizarHistorico();
-            renderizarVersoes();
-            if (document.getElementById('admin-dashboard').classList.contains('active')) renderizarAdminPanel();
-            if (document.getElementById('explorer').classList.contains('active')) {
-                renderTree();
-                renderExplorer();
-            }
-        }
-
-        // 🔹 ATUALIZAÇÃO OTIMISTA NAS AÇÕES (NÃO TEM MAIS DELAY DO GOOGLE) 🔹
         function criarDiretorioAtual() {
             let n = prompt("Nome da nova pasta:");
             if(n && n.trim() !== "") {
@@ -966,10 +980,9 @@
                 if (!appData.pastasContent[pathStr].includes(nameStr)) {
                     appData.pastasContent[pathStr].push(nameStr);
                     if (pathStr === '') appData.projetos.push({ nome: nameStr });
-                    renderizarTudo(); // Re-renderiza instantâneo
+                    renderizarTudo(); 
                 }
 
-                // Envia pro Google em background e skipSync = true
                 enviarComando({ acao: 'criarDiretorio', path: pathStr, nomePasta: nameStr }, "Criando...", true);
             }
         }
@@ -1066,6 +1079,7 @@
             container.innerHTML = html;
         }
 
+        // 🔹 BOTÃO DE LUPA ATUALIZADO NO EXPLORER 🔹
         function renderExplorer() {
             const container = document.getElementById('explorer-grid');
             const toolbar = document.getElementById('explorer-toolbar');
@@ -1186,14 +1200,14 @@
                 let largeThumbUrl = f.thumbUrl.replace('sz=w800', 'sz=w1920');
                 
                 let thumbButtons = canUpload ? `
-                    <button class="zoom-btn" onclick="abrirModalZoom('${largeThumbUrl}')" title="Ampliar Imagem">
-                        <span class="material-symbols-outlined">zoom_in</span>
+                    <button class="zoom-btn" onclick="abrirModalZoom('${f.id}', '${f.nome}', '${largeThumbUrl}')" title="Ampliar / Visualizar">
+                        <span class="material-symbols-outlined">visibility</span>
                     </button>
                     <button class="edit-btn" onclick="iniciarSubstituicao(event, '${f.nome}')" title="Substituir Arquivo">
                         <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
                     </button>` : `
-                    <button class="zoom-btn" onclick="abrirModalZoom('${largeThumbUrl}')" title="Ampliar Imagem">
-                        <span class="material-symbols-outlined">zoom_in</span>
+                    <button class="zoom-btn" onclick="abrirModalZoom('${f.id}', '${f.nome}', '${largeThumbUrl}')" title="Ampliar / Visualizar">
+                        <span class="material-symbols-outlined">visibility</span>
                     </button>`;
 
                 container.innerHTML += `
